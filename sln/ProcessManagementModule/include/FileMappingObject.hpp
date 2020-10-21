@@ -12,21 +12,18 @@
 #include <vector>
 #include <Windows.h>
 
-#include "FileMap.hpp"
 #include "Process.hpp"
 
-class SharedMemory {
+class FileMappingObject {
    public:
-	SharedMemory();
-	~SharedMemory();
+	FileMappingObject(std::wstring name, size_t size);
+	~FileMappingObject();
 
-	void attachProcess(Process process);
-	bool monitor();
-	void shutdown();
+	std::wstring getName();
+	size_t getSize();
 
    private:
-	HANDLE handle; // shared memory handle
-	std::vector<FileMap> fileMaps; // file mapping objects
-	size_t size;
-	std::wstring path;
+	std::wstring name;  // name of file mapping object
+	size_t size;        // size of file mapping object
+	HANDLE handle;      // handle of file mapping object
 };
