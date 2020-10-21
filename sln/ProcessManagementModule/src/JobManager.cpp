@@ -11,6 +11,7 @@ JobManager::JobManager() {
 
 	JOBOBJECT_EXTENDED_LIMIT_INFORMATION info = {};
 
+	// Tell the job object to kill all processes when job object dies
 	info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
 	if (!SetInformationJobObject(jobHandle, JobObjectExtendedLimitInformation, &info, sizeof(info))) {
 		std::cout << "ERROR: Could not set information in job object" << std::endl;
