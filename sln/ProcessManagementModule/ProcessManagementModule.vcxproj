@@ -82,15 +82,13 @@
   <ItemGroup>
     <ClCompile Include="src\JobManager.cpp" />
     <ClCompile Include="src\Main.cpp" />
-    <ClCompile Include="src\FileMap.cpp" />
     <ClCompile Include="src\Process.cpp" />
-    <ClCompile Include="src\SharedMemory.cpp" />
+    <ClCompile Include="src\FileMappingObject.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\FileMap.hpp" />
     <ClInclude Include="include\JobManager.hpp" />
     <ClInclude Include="include\Process.hpp" />
-    <ClInclude Include="include\SharedMemory.hpp" />
+    <ClInclude Include="include\FileMappingObject.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
