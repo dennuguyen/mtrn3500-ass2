@@ -33,9 +33,9 @@ class FileMappingObject {
 	FileMappingObject(std::wstring name, size_t size)
 		: name(name)
 		, size(size)
-		, createHandle()
-		, accessHandle()
-		, baseAddress()
+		, createHandle(NULL)
+		, accessHandle(NULL)
+		, baseAddress(NULL)
 	{}
 
 	~FileMappingObject() {
@@ -81,7 +81,8 @@ class FileMappingObject {
 	}
 
 	LPVOID mappedViewAddr() {
-		baseAddress = MapViewOfFile(accessHandle,
+		std::cout << "HANDLE IS " << (accessHandle != NULL ? "accessHandle" : "createHandle") << std::endl;
+		baseAddress = MapViewOfFile(accessHandle != NULL ? accessHandle : createHandle,
 			                        FILE_MAP_ALL_ACCESS,
 			                        0,
 			                        0,
