@@ -11,27 +11,31 @@ Design an architecture which includes:
 - Display Module
 
 Deliverables:
-- GPS data display
-- Steering and propulsion contorl of UGV
-- Graphical display of laser data, camera data, GPS data
+- GPS data display.
+- Steering and propulsion control of UGV.
+- Graphical display of laser data, camera data, GPS data.
 
 ### Process Management Module
-Set up "shared memory", start up all processes, monitor operational health of all processes, and shutdown of all processes.
 
-1. Set up shared memory, shared memory module must provide:
-  1. Read/write access to laser data
-  2. Read/write access to GPS data
-  3. Read/write access to camera data
-  4. Read/write access to vehicle contorl data
-  5. Read/write access to process management data
-2. Start all other processes in logical sequence suitable for teleop of UGV
-3. Monitor process heartbeats
-  1. Shutdown event if failure of critical process
-  2. Attempt to restart failed non-critical processes
-  3. Indicate main process is alive. If dead, shutdown.
-4. Routine shutdown of all processes in response to keypress event
+[] Set up shared memory, shared memory module must provide:\
+    [] Read/write access to laser data.\
+    [] Read/write access to GPS data.\
+    [] Read/write access to camera data.\
+    [] Read/write access to vehicle control data.\
+    [] Read/write access to process management data.\
+[] Start all other processes in logical sequence suitable for teleop of UGV.\
+[] Monitor process heartbeats.\
+  [] Shutdown event if failure of critical process.\
+  [] Attempt to restart failed non-critical processes.\
+  [] Indicate main process is alive. If dead, shutdown.\
+[] Routine shutdown of all processes in response to keypress event.
 
 ### Laser Module
+
+[] Write client to connect to UGV server (ip: 192.168.1.200, port: 23000).\
+[] Collect laser rangefinder data.\
+[] Store laser rangefinder data in array of (X,Y) in shared memory.\
+[] Detect laser process heartbeat and respond to shutdown commands from PM module.
 
 ### GNSS Module
 
