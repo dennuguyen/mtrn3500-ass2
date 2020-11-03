@@ -24,18 +24,12 @@
     <ClCompile Include="src\JobManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FileMappingObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Process.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\JobManager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\FileMappingObject.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
