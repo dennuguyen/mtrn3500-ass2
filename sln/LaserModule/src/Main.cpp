@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
         if (numBytes > 0) {
             int* addr = (int*)((LPWSTR)map.getBaseAddress() + 10);
             *addr = numBytes;
-            std::wcout << map.getBaseAddress() << std::endl;
+            std::wcout << *addr << std::endl;
         }
 
         // Connection closed
