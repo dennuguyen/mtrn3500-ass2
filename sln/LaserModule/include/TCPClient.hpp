@@ -9,7 +9,7 @@
 
 namespace tcp {
 
-    const int BUFFER_LEN = 1024;
+    const int BUFFER_LEN = 2046;
 
 	class TCPClient {
 	public:
@@ -50,8 +50,8 @@ namespace tcp {
                 exit(EXIT_FAILURE);
             }
 
-            // Authorise
-            std::wcout << "Authorising " << auth.c_str() << std::endl;
+            // Authenticate
+            std::wcout << "Authenticating " << auth.c_str() << std::endl;
             tcpSend(auth);
 
             // Indicate success
@@ -61,8 +61,7 @@ namespace tcp {
 		}
 
         char* tcpSend(std::string data) {
-            strncpy_s(buffer, data.c_str(), data.size());
-            if (send(clientSocket, buffer, data.size(), 0) == SOCKET_ERROR) {
+            if (send(clientSocket, data.c_str(), data.size(), 0) == SOCKET_ERROR) {
                 std::wcerr << "WARNING " << WSAGetLastError() << ": Could not send data" << std::endl;
             }
             return buffer;
