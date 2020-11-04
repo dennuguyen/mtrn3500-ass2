@@ -5,6 +5,8 @@
 struct Process {
    public:
 	Process(LPWSTR path);
+	Process(const Process& proc) : path(proc.path), sinfo(proc.sinfo), pinfo(proc.pinfo) {}
+	Process(Process&& proc) noexcept : path(std::move(proc.path)), sinfo(std::move(proc.sinfo)), pinfo(std::move(proc.pinfo)) {}
 	~Process();
 
 	void restart();
