@@ -17,25 +17,25 @@ Deliverables:
 
 ### Process Management Module
 
-[] Set up shared memory, shared memory module must provide:\
-    [] Read/write access to laser data.\
-    [] Read/write access to GPS data.\
-    [] Read/write access to camera data.\
-    [] Read/write access to vehicle control data.\
-    [] Read/write access to process management data.\
-[] Start all other processes in logical sequence suitable for teleop of UGV.\
-[] Monitor process heartbeats.\
-  [] Shutdown event if failure of critical process.\
-  [] Attempt to restart failed non-critical processes.\
-  [] Indicate main process is alive. If dead, shutdown.\
-[] Routine shutdown of all processes in response to keypress event.
+* Set up shared memory, shared memory module must provide []
+    * Read/write access to laser data []
+    * Read/write access to GPS data []
+    * Read/write access to camera data []
+    * Read/write access to vehicle control data []
+    * Read/write access to process management data []
+* Start all other processes in logical sequence suitable for teleop of UGV []
+* Monitor process heartbeats []
+  * Shutdown event if failure of critical process []
+  * Attempt to restart failed non-critical processes []
+  * Indicate main process is alive. If dead, shutdown []
+* Routine shutdown of all processes in response to keypress event []
 
 ### Laser Module
 
-[] Write client to connect to UGV server (ip: 192.168.1.200, port: 23000).\
-[] Collect laser rangefinder data.\
-[] Store laser rangefinder data in array of (X,Y) in shared memory.\
-[] Detect laser process heartbeat and respond to shutdown commands from PM module.
+* Write client to connect to UGV server (ip: 192.168.1.200, port: 23000) []
+* Collect laser rangefinder data []
+* Store laser rangefinder data in array of (X,Y) in shared memory []
+* Detect laser process heartbeat and respond to shutdown commands from PM module []
 
 ### GNSS Module
 
