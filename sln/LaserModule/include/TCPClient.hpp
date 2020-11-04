@@ -61,6 +61,11 @@ namespace tcp {
             return clientSocket;
 		}
 
+        void tcpClose() {
+            if (clientSocket != NULL && clientSocket != INVALID_SOCKET)
+                closesocket(clientSocket);
+        }
+
         char* tcpSend(std::string data) {
             if (send(clientSocket, data.c_str(), data.size(), 0) == SOCKET_ERROR) {
                 std::wcerr << "WARNING " << WSAGetLastError() << ": Could not send data" << std::endl;
