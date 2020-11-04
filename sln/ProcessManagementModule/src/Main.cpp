@@ -4,7 +4,6 @@
  * 
  */
 
-#include <cassert>
 #include <conio.h>
 #include <iostream>
 #include <iomanip>
@@ -23,8 +22,10 @@ int main(int argc, char** argv) {
 	std::vector<std::pair<Process, sm::FileMappingObject>> processes;
 	processes.reserve(5);
 	for (const WCHAR* path : sm::modules) {
-		if (path == sm::GPS)
-			break;
+
+		if (path != sm::LASER)
+			continue;
+
 		Process process((LPWSTR)path);  // create new process
 		jm.attachProcess(process);      // add process to job manager
 
@@ -32,19 +33,23 @@ int main(int argc, char** argv) {
 		map.createFileMapping();                    // create file mapping object handle
 		map.mappedViewAddr();                       // get map view base address
 
-		processes.emplace_back(process, map);  // move process to vector
+		processes.emplace_back(std::move(process), std::move(map));  // move process to vector
 	}
 
-	Sleep(1000);
+	Sleep(1000); // give time for processes to set up
+
+	int* addr = (int*)((LPWSTR)processes[0].second.getBaseAddress() + 10);
+	std::wcout << *addr << std::endl;
 
 	// Monitoring
 	while (!_kbhit()) {
-		for (std::pair<Process, sm::FileMappingObject> process : processes) {
+		for (auto process : processes) {
 			std::wcout << std::setw(24) << std::right << process.first;
 			std::wcout << std::setw(6) << std::right << (process.first.isAlive() ? L"Alive" : L"Dead");
 			std::wcout << std::endl << std::endl;
-			std::wcout << process.second.getBaseAddress() << std::endl;
-			std::wcout << *((int*)process.second.getBaseAddress() + 10) << std::endl;
+
+			int* addr = (int*)((LPWSTR)process.second.getBaseAddress() + 10);
+			std::wcout << *addr << std::endl;
 
 			// Restart dead process
 			if (!process.first.isAlive()) {
@@ -54,8 +59,10 @@ int main(int argc, char** argv) {
 	}
 
 	// Shutdown all processes if not shutdown
-	for (auto process : processes)
+	for (auto process : processes) {
+		process.second.close();
 		process.first.kill();
+	}
 
 	return EXIT_SUCCESS;
 }
