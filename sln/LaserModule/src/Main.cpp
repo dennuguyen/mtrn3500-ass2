@@ -10,7 +10,9 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
-static void parsePointCloud(std::string data) {
+typedef std::vector<std::pair<double, double>>  PointList;
+
+static PointList parsePointCloud(std::string data) {
 
     // Tokenize data
     std::stringstream dataStream;
@@ -34,11 +36,11 @@ static void parsePointCloud(std::string data) {
     std::vector<std::pair<double, double>> coords;
     for (int i = 6; i < numData + 6; i++) {
         ULONG radius = std::stol(dataVector.at(i), nullptr, 16);
-        //coords.push_back({std::stod(dataVector.at(i)) * cos(angle), std::stod(dataVector.at(i)) * sin(angle) });
+        coords.push_back({radius * cos(angle), radius * sin(angle) });
         angle += stepWidth;
     }
-    
-    //return coords;
+
+    return coords;
 }
 
 int main(int argc, char** argv) {
@@ -60,10 +62,10 @@ int main(int argc, char** argv) {
         Sleep(500);
 
         std::string buffer = client.tcpReceive();
-        parsePointCloud(buffer.substr(buffer.find("DIST1")));
+        PointList* addr = (PointList*)((LPWSTR)map.getBaseAddress() + 10);
+        *addr = parsePointCloud(buffer.substr(buffer.find("DIST1")));
 
-        //char* addr = (char*)((LPWSTR)map.getBaseAddress() + 10);
-        //*addr = *client.getBuffer().c_str();
+        Sleep(500);
     }
 
     closesocket(clientSocket);
