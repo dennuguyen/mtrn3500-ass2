@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
 	// Start processes and create file mapping objects for each process
 	std::vector<std::pair<Process, sm::FileMappingObject>> processes;
 	processes.reserve(5);
-	for (auto [ path, ip, port ] : mod::modules) {
+	for (auto [ path, ip, port ] : mod::MODULES) {
 
 		if (path != mod::LASER.name)
 			continue;

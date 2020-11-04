@@ -18,7 +18,7 @@ const Module LASER = { L"LaserModule.exe", L"192.168.1.200", 23000 };
 const Module MANAGE = { L"ProcessManagementModule.exe" };
 const Module TELEOP = { L"VehicleControlModule.exe", L"192.168.1.200", 25000 };
 
-const Module modules[] = {
+const Module MODULES[] = {
     DISPLAY,
     LASER,
     GPS,
