@@ -1,4 +1,6 @@
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 
@@ -20,9 +22,15 @@ int main(int argc, char** argv) {
     SOCKET clientSocket = client.tcpConnect();
 
     while (1) {
-        std::cout << client.tcpReceive();
+        client.tcpReceive();
         char* addr = (char*)((LPWSTR)map.getBaseAddress() + 10);
         *addr = *client.getBuffer().c_str();
+
+        std::stringstream ss;
+        ss << std::hex << std::setfill('0');
+        for (int i = 0; i < 1024; i++)
+            ss << std::setw(2) << static_cast<unsigned>(addr[i]);
+        std::cout << ss.str();
     }
 
     closesocket(clientSocket);
