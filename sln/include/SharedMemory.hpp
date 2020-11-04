@@ -1,3 +1,8 @@
+/**
+ * A file mapping object (section object) is a file where its contents are
+ * associated with a virtual address space of a process.
+ */
+
 #ifndef SM_HPP_
 #define SM_HPP_
 
@@ -6,28 +11,9 @@
 #include <Windows.h>
 
 namespace sm {
-// Shared memory size
-size_t SIZE = 1024;
 
-// Constant module strings
-const WCHAR CAMERA[] = L"CameraModule.exe";
-const WCHAR DISPLAY[] = L"DisplayModule.exe";
-const WCHAR GPS[] = L"GNSSModule.exe";
-const WCHAR LASER[] = L"LaserModule.exe";
-const WCHAR MANAGE[] = L"ProcessManagementModule.exe";
-const WCHAR TELEOP[] = L"VehicleControlModule.exe";
-const WCHAR* modules[] = {
-    DISPLAY,
-    LASER,
-    GPS,
-    CAMERA,
-    TELEOP,
-};
+size_t SIZE = 1024; // size of maps
 
-/**
- * A file mapping object (section object) is a file where its contents are
- * associated with a virtual address space of a process.
- */
 class FileMappingObject {
    public:
 	FileMappingObject(std::wstring name, size_t size)

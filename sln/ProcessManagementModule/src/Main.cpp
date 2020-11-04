@@ -13,6 +13,7 @@
 #include "JobManager.hpp"
 #include "Process.hpp"
 #include "SharedMemory.hpp"
+#include "Modules.hpp"
 
 int main(int argc, char** argv) {
 
@@ -21,9 +22,9 @@ int main(int argc, char** argv) {
 	// Start processes and create file mapping objects for each process
 	std::vector<std::pair<Process, sm::FileMappingObject>> processes;
 	processes.reserve(5);
-	for (const WCHAR* path : sm::modules) {
+	for (auto [ path, ip, port ] : mod::modules) {
 
-		if (path != sm::LASER)
+		if (path != mod::LASER.name)
 			continue;
 
 		Process process((LPWSTR)path);  // create new process
