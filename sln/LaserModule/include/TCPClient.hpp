@@ -17,7 +17,6 @@ namespace tcp {
             : clientSocket()
             , ip(ip)
             , port(port)
-            , buffer()
             , auth(auth)
         {}
 
@@ -53,9 +52,7 @@ namespace tcp {
 
             // Authorise
             std::wcout << "Authorising " << auth.c_str() << std::endl;
-            if (send(clientSocket, auth.c_str(), 9, 0) == SOCKET_ERROR) {
-                std::wcerr << "WARNING " << WSAGetLastError() << ": Could not send data" << std::endl;
-            }
+            tcpSend(auth);
 
             // Indicate success
             std::wcout << "Connection success" << std::endl;
@@ -63,11 +60,16 @@ namespace tcp {
             return clientSocket;
 		}
 
+        char* tcpSend(std::string data) {
+            strncpy_s(buffer, data.c_str(), data.size());
+            if (send(clientSocket, buffer, data.size(), 0) == SOCKET_ERROR) {
+                std::wcerr << "WARNING " << WSAGetLastError() << ": Could not send data" << std::endl;
+            }
+            return buffer;
+        }
+
         char* tcpReceive() {
             int numBytes = recv(clientSocket, buffer, sizeof(buffer), 0);
-
-            std::cout << buffer << std::endl;
-
 
             if (numBytes == 0) {
                 std::wcout << "Connection has been closed. Restarting connection." << std::endl;
