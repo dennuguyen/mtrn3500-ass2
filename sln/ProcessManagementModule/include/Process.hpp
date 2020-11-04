@@ -4,7 +4,7 @@
 
 struct Process {
    public:
-	Process(LPWSTR path);
+	Process(std::wstring path);
 	Process(const Process& proc) : path(proc.path), sinfo(proc.sinfo), pinfo(proc.pinfo) {}
 	Process(Process&& proc) noexcept : path(std::move(proc.path)), sinfo(std::move(proc.sinfo)), pinfo(std::move(proc.pinfo)) {}
 	~Process();
@@ -17,7 +17,7 @@ struct Process {
 	friend std::wostream& operator<<(std::wostream& output, Process& process);
 
    public:
-	LPWSTR path;                // path to process executable
+	std::wstring path;          // path to process executable
 	STARTUPINFO sinfo;          // startup info
 	PROCESS_INFORMATION pinfo;  // process info
 };

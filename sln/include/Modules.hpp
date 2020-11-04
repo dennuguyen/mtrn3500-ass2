@@ -3,11 +3,11 @@
 
 namespace mod {
 
-const char ZID[] = "z5206032\n";
+const std::string ZID = "z5206032\n";
 
 struct Module {
-    const WCHAR* name;
-    const WCHAR* ip;
+    const std::wstring name;
+    const std::wstring ip;
     const int port;
 };
 

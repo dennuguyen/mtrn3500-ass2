@@ -3,7 +3,7 @@
 
 #include "Process.hpp"
 
-Process::Process(LPWSTR path) : path(path), sinfo({}), pinfo({}) {
+Process::Process(std::wstring path) : path(path), sinfo({}), pinfo({}) {
 	if (CreateProcess(NULL,
 		(LPWSTR)std::wstring(path).c_str(),
 		NULL,

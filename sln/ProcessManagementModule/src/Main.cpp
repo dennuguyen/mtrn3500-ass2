@@ -27,8 +27,8 @@ int main(int argc, char** argv) {
 		if (path != mod::LASER.name)
 			continue;
 
-		Process process((LPWSTR)path);  // create new process
-		jm.attachProcess(process);      // add process to job manager
+		Process process(path);      // create new process
+		jm.attachProcess(process);  // add process to job manager
 
 		sm::FileMappingObject map(path, sm::SIZE);  // create file mapping object for new process
 		map.createFileMapping();                    // create file mapping object handle
