@@ -38,8 +38,21 @@ class FileMappingObject {
 		, baseAddress(NULL)
 	{}
 
-	FileMappingObject(const FileMappingObject& obj) : name(obj.name), size(obj.size), createHandle(obj.createHandle), accessHandle(obj.accessHandle), baseAddress(obj.baseAddress) {}
-	FileMappingObject(FileMappingObject&& obj) noexcept : name(std::move(obj.name)), size(std::move(obj.size)), createHandle(std::move(obj.createHandle)), accessHandle(std::move(obj.accessHandle)), baseAddress(std::move(obj.baseAddress)) {}
+	FileMappingObject(const FileMappingObject& obj)
+		: name(obj.name)
+		, size(obj.size)
+		, createHandle(obj.createHandle)
+		, accessHandle(obj.accessHandle)
+		, baseAddress(obj.baseAddress)
+	{}
+
+	FileMappingObject(FileMappingObject&& obj) noexcept
+		: name(std::move(obj.name))
+		, size(std::move(obj.size))
+		, createHandle(std::move(obj.createHandle))
+		, accessHandle(std::move(obj.accessHandle))
+		, baseAddress(std::move(obj.baseAddress))
+	{}
 
 	~FileMappingObject() {}
 
