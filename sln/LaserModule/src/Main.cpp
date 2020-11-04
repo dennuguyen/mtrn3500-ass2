@@ -22,15 +22,18 @@ int main(int argc, char** argv) {
     SOCKET clientSocket = client.tcpConnect();
 
     while (1) {
-        client.tcpReceive();
-        char* addr = (char*)((LPWSTR)map.getBaseAddress() + 10);
-        *addr = *client.getBuffer().c_str();
+        std::stringstream request;
+        request << (char)0x02 << "sRN LMDscandata" << (char)0x03;
+        client.tcpSend(request.str());
 
-        std::stringstream ss;
-        ss << std::hex << std::setfill('0');
-        for (int i = 0; i < 1024; i++)
-            ss << std::setw(2) << static_cast<unsigned>(addr[i]);
-        std::cout << ss.str();
+        Sleep(500);
+
+        char* buffer = client.tcpReceive();
+        std::cout << buffer << std::endl;
+
+
+        //char* addr = (char*)((LPWSTR)map.getBaseAddress() + 10);
+        //*addr = *client.getBuffer().c_str();
     }
 
     closesocket(clientSocket);

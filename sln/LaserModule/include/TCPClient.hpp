@@ -17,6 +17,7 @@ namespace tcp {
             : clientSocket()
             , ip(ip)
             , port(port)
+            , buffer()
             , auth(auth)
         {}
 
@@ -89,7 +90,7 @@ namespace tcp {
         const std::wstring ip;    // IP address of TCP connection
 		const int port;           // Port of TCP connection
         char buffer[BUFFER_LEN];  // Buffer to store data over TCP
-        std::string auth;         // Authorisation key
+        std::string auth;         // Authentication key
     };
 }  // namespace tcp
 
