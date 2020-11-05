@@ -12,7 +12,7 @@ constexpr auto TIMEOUT_4S = 4s;
 
 class Timer {
    public:
-    Timer(std::chrono::steady_clock::time_point ref, std::chrono::milliseconds exp) : ref(ref), exp(exp) {}
+    Timer(std::chrono::milliseconds exp) : ref(), exp(exp) {}
     ~Timer() {}
 
     void time() { ref = std::chrono::steady_clock::now(); }
