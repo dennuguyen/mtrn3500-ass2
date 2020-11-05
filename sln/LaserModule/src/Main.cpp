@@ -2,13 +2,12 @@
 #include <iterator>
 #include <sstream>
 #include <WinSock2.h>
-#include <WS2tcpip.h>
 
-#include "SharedMemory.hpp"
 #include "Modules.hpp"
+#include "SharedMemory.hpp"
 #include "TCPClient.hpp"
 
-#pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "Ws2_32.lib")  // #include <Winsock2.h>
 
 typedef std::vector<std::pair<double, double>>  PointList;
 
@@ -68,8 +67,7 @@ int main(int argc, char** argv) {
         Sleep(500);
     }
 
-    closesocket(clientSocket);
-    WSACleanup();
+    client.tcpClose();
 
     return EXIT_SUCCESS;
 }

@@ -64,6 +64,7 @@ namespace tcp {
         void tcpClose() {
             if (clientSocket != NULL && clientSocket != INVALID_SOCKET)
                 closesocket(clientSocket);
+            WSACleanup();
         }
 
         char* tcpSend(std::string data) {
