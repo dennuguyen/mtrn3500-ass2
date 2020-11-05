@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
 
     // Create TCP client
     tcp::TCPClient client(mod::LASER.ip, mod::LASER.port, mod::ZID);
-    SOCKET clientSocket = client.tcpConnect();
+    client.tcpConnect();
 
     while (1) {
         std::stringstream request;
