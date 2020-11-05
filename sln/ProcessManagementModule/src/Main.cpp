@@ -11,9 +11,10 @@
 #include <Windows.h>
 
 #include "JobManager.hpp"
+#include "Modules.hpp"
 #include "Process.hpp"
 #include "SharedMemory.hpp"
-#include "Modules.hpp"
+#include "TCPClient.hpp"
 
 int main(int argc, char** argv) {
 
