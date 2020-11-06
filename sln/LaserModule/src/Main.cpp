@@ -48,7 +48,11 @@ int main(int argc, char** argv) {
              // Receive and parse data
              std::string buffer = client.tcpReceive();
              PointList* addr = (PointList*)((LPWSTR)map.getBaseAddress());
-             *addr = parsePointCloud(buffer.substr(buffer.find("DIST1")));
+             PointList points = parsePointCloud(buffer.substr(buffer.find("DIST1")));
+             *(addr + 8) = points;
+
+             // Print points
+             printPoints(points);
 
              // Set heartbeat
              *heartbeat = true;
@@ -84,15 +88,12 @@ static PointList parsePointCloud(std::string data) {
     int numData = std::stoi(dataVector.at(5));
 
     // Parse data
-    std::vector<std::pair<double, double>> coords;
+    PointList coords;
     for (int i = 6; i < numData + 6; i++) {
         ULONG radius = std::stol(dataVector.at(i), nullptr, 16);
         coords.push_back({ radius * cos(angle), radius * sin(angle) });
         angle += stepWidth;
     }
-
-    // Print data
-    printPoints(coords);
 
     return coords;
 }
