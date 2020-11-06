@@ -7,7 +7,6 @@
 #include "TCPClient.hpp"  // #include <Winsock2.h>
 #include "Timer.hpp"
 
-
 static char* parseGPSData(std::string data) {
     return &data[0];
 }
@@ -25,8 +24,8 @@ int main(int argc, char** argv) {
     bool* heartbeat = (bool*)((char*)management.mappedViewAddr() + mod::GPS.heartbeat);
 
     // Create TCP client
-   //tcp::TCPClient client(mod::GPS.ip, mod::GPS.port, mod::ZID);
-   //client.tcpConnect();
+    tcp::TCPClient client(mod::GPS.ip, mod::GPS.port, mod::ZID);
+    client.tcpConnect();
 
     // Create timer
     tmr::Timer timer;
@@ -35,12 +34,14 @@ int main(int argc, char** argv) {
     while (!timer.expired()) {
         if (*heartbeat == false) {
 
-            //std::string buffer = client.tcpReceive();
-            //char** addr = (char**)((LPWSTR)map.getBaseAddress() + 10);
-            //*addr = parseGPSData(buffer.substr(26));
-            //std::cout << addr << " : " << *addr << std::endl;
-
+            // Wait for no reason
             Sleep(500);
+
+            // Receive and parse GPS data
+            std::string buffer = client.tcpReceive();
+            char** addr = (char**)((LPWSTR)map.getBaseAddress() + 10);
+            *addr = parseGPSData(buffer.substr(26));
+            std::cout << addr << " : " << *addr << std::endl;
 
             // Set heartbeat
             *heartbeat = true;
@@ -48,7 +49,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    //client.tcpClose();
+    client.tcpClose();
 
 	return EXIT_SUCCESS;
 }
