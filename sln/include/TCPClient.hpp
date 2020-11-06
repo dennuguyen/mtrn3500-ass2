@@ -100,4 +100,6 @@ namespace tcp {
     };
 }  // namespace tcp
 
+#pragma comment(lib, "Ws2_32.lib")  // #include <Winsock2.h>
+
 #endif // TCP_HPP_
