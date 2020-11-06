@@ -17,6 +17,8 @@
 
 constexpr int numModules = 5;
 
+static void printHeartbeats(bool* heartbeats[]);
+
 int main(int argc, char** argv) {
 
 	// Create the job manager
@@ -59,14 +61,11 @@ int main(int argc, char** argv) {
 		for (auto & process : processes) {
 
 			// Printing heartbeats
-			for (int i = 0; i < numModules; i++) {
-				std::cout << (*heartbeats)[i] << " ";
-			}
-			std::cout << std::endl;
+			printHeartbeats(heartbeats);
 
 			if (process.first.minfo.name == mod::LASER.name) {
 				// Print laser data
-				std::cout << process.second.mappedViewAddr() << std::endl;
+				std::cout << *(char*)process.second.mappedViewAddr() << std::endl;
 			}
 
 			// Reset heartbeat
@@ -102,3 +101,10 @@ int main(int argc, char** argv) {
 /*std::wcout << std::setw(24) << std::right << process.first;
 			std::wcout << std::setw(6) << std::right << (process.first.isAlive() ? L"Alive" : L"Dead");
 			std::wcout << std::endl << std::endl;*/
+
+static void printHeartbeats(bool* heartbeats[]) {
+	std::cout << "C D G L T" << std::endl;
+	for (int i = 0; i < numModules; i++)
+			std::cout << (*heartbeats)[i] << " ";
+	std::cout << std::endl << std::endl;
+}
