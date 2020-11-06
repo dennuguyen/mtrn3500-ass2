@@ -7,10 +7,12 @@
 #include "SharedMemory.hpp"
 #include "TCPClient.hpp"  // #include <Winsock2.h>
 #include "Timer.hpp"
+#include <iomanip>
 
 typedef std::vector<std::pair<double, double>>  PointList;
 
 static PointList parsePointCloud(std::string data);
+static void printPoints(PointList coords);
 
 int main(int argc, char** argv) {
 
@@ -89,5 +91,14 @@ static PointList parsePointCloud(std::string data) {
         angle += stepWidth;
     }
 
+    // Print data
+    printPoints(coords);
+
     return coords;
+}
+
+static void printPoints(PointList coords) {
+    for (const auto & coord : coords)
+        std::cout << "(" << coord.first << ", " << coord.second << ")" << std::endl;
+    std::cout << std::endl << std::endl;
 }
