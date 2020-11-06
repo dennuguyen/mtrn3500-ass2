@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
 
 			if (process.first.minfo.name == mod::LASER.name) {
 				// Print laser data
-				std::cout << *(char*)process.second.mappedViewAddr() << std::endl;
+				// std::cout << *(char*)process.second.mappedViewAddr() << std::endl;
 			}
 
 			// Reset heartbeat
