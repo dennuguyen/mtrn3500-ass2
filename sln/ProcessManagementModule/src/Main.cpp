@@ -10,28 +10,30 @@
 #include <vector>
 #include <Windows.h>
 
+#include "Heartbeats.hpp"
 #include "JobManager.hpp"
 #include "Modules.hpp"
 #include "Process.hpp"
 #include "SharedMemory.hpp"
-#include "TCPClient.hpp"
 
 int main(int argc, char** argv) {
 
-	JobManager jm;  // create the job manager
+	//JobManager jm;  // create the job manager
 
-	// Start processes and create file mapping objects for each process
+	// Create processes and create file mapping objects for each process
 	std::vector<std::pair<Process, sm::FileMappingObject>> processes;
 	processes.reserve(5);
-	for (auto [ path, ip, port ] : mod::MODULES) {
+	for (auto [ name, ip, port ] : mod::MODULES) {
 
-		if (path != mod::LASER.name)
+		if (name == mod::LASER.name || name == mod::GPS.name)
+			;
+		else
 			continue;
 
-		Process process(path);      // create new process
-		jm.attachProcess(process);  // add process to job manager
+		Process process(name);      // create new process
+		//jm.attachProcess(process);  // add process to job manager
 
-		sm::FileMappingObject map(path, sm::SIZE);  // create file mapping object for new process
+		sm::FileMappingObject map(name, sm::SIZE);  // create file mapping object for new process
 		map.createFileMapping();                    // create file mapping object handle
 		map.mappedViewAddr();                       // get map view base address
 
@@ -40,31 +42,45 @@ int main(int argc, char** argv) {
 
 	Sleep(1000); // give time for processes to set up
 
-	int* addr = (int*)((LPWSTR)processes[0].second.getBaseAddress() + 10);
-	std::wcout << *addr << std::endl;
+	// Set up process management
+	sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
+	management.createFileMapping();
+	hb::Heartbeats* heartbeats = (hb::Heartbeats*)(LPWSTR)management.mappedViewAddr();
 
-	// Monitoring
+	// Enter loop
 	while (!_kbhit()) {
 		for (auto process : processes) {
-			std::wcout << std::setw(24) << std::right << process.first;
-			std::wcout << std::setw(6) << std::right << (process.first.isAlive() ? L"Alive" : L"Dead");
-			std::wcout << std::endl << std::endl;
 
-			int* addr = (int*)((LPWSTR)process.second.getBaseAddress() + 10);
-			std::wcout << *addr << std::endl;
+			std::cout << heartbeats;
 
-			// Restart dead process
-			if (!process.first.isAlive()) {
-				process.first.kill();
+			// Reset heartbeat
+			if (*heartbeat.check(process.first.name) == true) {
+				*heartbeat = false;
+				process.first.timer.time();
 			}
-		}
-	}
 
-	// Shutdown all processes if not shutdown
-	for (auto process : processes) {
-		process.second.close();
-		process.first.kill();
+			// Monitor processes
+			if (process.first.timer.expired()) {
+
+				if (process.first.name == mod::LASER.name ||
+					process.first.name == mod::CAMERA.name) {
+
+					std::wcout << process.first.name << " FAILED" << std::endl;
+					//exit(EXIT_FAILURE);
+				}
+				else {
+					std::wcout << process.first.name << " RESTARTING" << std::endl;
+				}
+			}
+
+		}
+
+		Sleep(100);
 	}
 
 	return EXIT_SUCCESS;
 }
+
+/*std::wcout << std::setw(24) << std::right << process.first;
+			std::wcout << std::setw(6) << std::right << (process.first.isAlive() ? L"Alive" : L"Dead");
+			std::wcout << std::endl << std::endl;*/
