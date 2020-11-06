@@ -47,9 +47,13 @@ int main(int argc, char** argv) {
 
              // Receive and parse data
              std::string buffer = client.tcpReceive();
-             PointList* addr = (PointList*)((LPWSTR)map.getBaseAddress());
              PointList points = parsePointCloud(buffer.substr(buffer.find("DIST1")));
-             *(addr + 8) = points;
+
+             // Put array length and data points in shared memory 
+             uint8_t* baseAddr = (uint8_t*)((LPWSTR)map.getBaseAddress() + 0);
+             PointList* vecAddr = (PointList*)((LPWSTR)map.getBaseAddress() + 8);
+             *baseAddr = sizeof(points);
+             *vecAddr = points;
 
              // Print points
              printPoints(points);
