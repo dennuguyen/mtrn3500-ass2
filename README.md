@@ -48,7 +48,9 @@ Deliverables:
 
 ### Camera Module
 
-* 
+* Write client to connect to UGV server (192.168.1.200:26000) []
+* Get most recent camera image frame []
+* Display camera image on screen []
 
 ### Vehicle Control Module
 
