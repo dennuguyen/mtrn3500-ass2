@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 	processes.reserve(numModules);
 	for (mod::ModuleInfo minfo : mod::STARTUP) {
 
-		if (minfo.name == mod::LASER.name || minfo.name == mod::GPS.name)
+		if (minfo.name == mod::LASER.name || minfo.name == mod::GPS.name || minfo.name == mod::CAMERA.name)
 			;
 		else
 			continue;
