@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
 		processes.emplace_back(std::move(process), std::move(map));  // move process to vector
 	}
 
-	Sleep(1000); // give time for processes to startup
+	Sleep(600); // give time for processes to startup
 
 	// Enter loop
 	while (!_kbhit()) {
@@ -64,8 +64,12 @@ int main(int argc, char** argv) {
 			printHeartbeats(heartbeats);
 
 			if (process.first.minfo.name == mod::LASER.name) {
-				// Print laser data
-				// std::cout << *(char*)process.second.mappedViewAddr() << std::endl;
+				int numPoints = *(uint8_t*)process.second.mappedViewAddr();
+				std::cout << numPoints;
+				std::vector<std::pair<double, double>>* points = (std::vector<std::pair<double, double>>*)((char*)process.second.mappedViewAddr() + 8);
+				for (const auto & point : *points) {
+					std::cout << point.first  << "\t" << point.second << std::endl;
+				}
 			}
 
 			// Reset heartbeat
