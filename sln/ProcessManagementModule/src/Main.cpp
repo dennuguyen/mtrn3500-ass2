@@ -10,72 +10,81 @@
 #include <vector>
 #include <Windows.h>
 
-#include "Heartbeats.hpp"
 #include "JobManager.hpp"
 #include "Modules.hpp"
 #include "Process.hpp"
 #include "SharedMemory.hpp"
 
+constexpr int numModules = 5;
+
 int main(int argc, char** argv) {
 
-	//JobManager jm;  // create the job manager
-
-	// Create processes and create file mapping objects for each process
-	std::vector<std::pair<Process, sm::FileMappingObject>> processes;
-	processes.reserve(5);
-	for (auto [ name, ip, port ] : mod::MODULES) {
-
-		if (name == mod::LASER.name || name == mod::GPS.name)
-			;
-		else
-			continue;
-
-		Process process(name);      // create new process
-		//jm.attachProcess(process);  // add process to job manager
-
-		sm::FileMappingObject map(name, sm::SIZE);  // create file mapping object for new process
-		map.createFileMapping();                    // create file mapping object handle
-		map.mappedViewAddr();                       // get map view base address
-
-		processes.emplace_back(std::move(process), std::move(map));  // move process to vector
-	}
-
-	Sleep(1000); // give time for processes to set up
+	// Create the job manager
+	//JobManager jm;
 
 	// Set up process management
 	sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
 	management.createFileMapping();
-	hb::Heartbeats* heartbeats = (hb::Heartbeats*)(LPWSTR)management.mappedViewAddr();
+
+	// Setup heartbeat map
+	bool* heartbeats[numModules];
+	*heartbeats = (bool*)(LPWSTR)management.mappedViewAddr();
+	for (int i = 0; i < numModules; i++)
+		(*heartbeats)[i] = { true };
+
+	// Create processes and create file mapping objects for each process
+	std::vector<std::pair<Process, sm::FileMappingObject>> processes;
+	processes.reserve(numModules);
+	for (mod::ModuleInfo minfo : mod::STARTUP) {
+
+		if (minfo.name == mod::LASER.name || minfo.name == mod::GPS.name)
+			;
+		else
+			continue;
+
+		Process process(minfo);      // create new process
+		//jm.attachProcess(process);  // add process to job manager
+
+		sm::FileMappingObject map(minfo.name, sm::SIZE);  // create file mapping object for new process
+		map.createFileMapping();                          // create file mapping object handle
+		map.mappedViewAddr();                             // get map view base address
+
+		processes.emplace_back(std::move(process), std::move(map));  // move process to vector
+	}
+
+	Sleep(1000); // give time for processes to set 
 
 	// Enter loop
 	while (!_kbhit()) {
-		for (auto process : processes) {
+		for (auto & process : processes) {
 
-			std::cout << heartbeats;
+			for (int i = 0; i < numModules; i++)
+				std::cout << (*heartbeats)[i] << " ";
+			std::cout << std::endl;
 
 			// Reset heartbeat
-			if (*heartbeat.check(process.first.name) == true) {
-				*heartbeat = false;
-				process.first.timer.time();
+			if ((*heartbeats)[process.first.minfo.heartbeat] == true) {
+				(*heartbeats)[process.first.minfo.heartbeat] = false;
+				process.first.timer.time(tmr::TIMEOUT_2S);
 			}
 
 			// Monitor processes
-			if (process.first.timer.expired()) {
+			else if (process.first.timer.expired()) {
 
-				if (process.first.name == mod::LASER.name ||
-					process.first.name == mod::CAMERA.name) {
+				if (process.first.minfo.name == mod::LASER.name ||
+					process.first.minfo.name == mod::CAMERA.name) {
 
-					std::wcout << process.first.name << " FAILED" << std::endl;
+					std::wcout << process.first.minfo.name << " FAILED" << std::endl;
 					//exit(EXIT_FAILURE);
 				}
 				else {
-					std::wcout << process.first.name << " RESTARTING" << std::endl;
+					std::wcout << process.first.minfo.name << " RESTARTING" << std::endl;
+					process.first.start();
 				}
 			}
-
 		}
 
-		Sleep(100);
+		Sleep(200);
 	}
 
 	return EXIT_SUCCESS;

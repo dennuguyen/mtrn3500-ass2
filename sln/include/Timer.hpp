@@ -2,30 +2,39 @@
 #define TIMER_HPP_
 
 #include <chrono>
+#include <cassert>
 
 using namespace std::chrono_literals;
 
-namespace tm {
+namespace tmr {
 constexpr auto TIMEOUT_1S = 1s;
 constexpr auto TIMEOUT_2S = 2s;
 constexpr auto TIMEOUT_4S = 4s;
 
 class Timer {
    public:
-    Timer(std::chrono::milliseconds exp) : ref(), exp(exp) {}
+    Timer() : ref(), exp() {}
     ~Timer() {}
 
-    void time() { ref = std::chrono::steady_clock::now(); }
+    void time(std::chrono::milliseconds expiry) {
+        ref = std::chrono::system_clock::now();
+        exp = expiry;
+    }
 
     bool expired() {
         return std::chrono::duration_cast<std::chrono::milliseconds>(
-                   std::chrono::steady_clock::now() - ref) > exp;
+            std::chrono::system_clock::now() - ref) > exp;
     }
 
-   private:
-    std::chrono::steady_clock::time_point ref;  // Time of reference
+    void print() {
+        std::cout << "Time: " << std::chrono::system_clock::to_time_t(ref) << std::endl;
+        std::cout << "Expiry: " << exp.count() << "s" << std::endl;
+    }
+
+   //private:
+    std::chrono::system_clock::time_point ref;  // Time of reference
     std::chrono::milliseconds exp;              // Expiry duration
 };
-}  // namespace tm
+}  // namespace tmr
 
 #endif  // TIMER_HPP_
