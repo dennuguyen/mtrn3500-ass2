@@ -49,14 +49,14 @@ int main(int argc, char** argv) {
              std::string buffer = client.tcpReceive();
              PointList points = parsePointCloud(buffer.substr(buffer.find("DIST1")));
 
-             // Put array length and data points in shared memory 
+             // Put number of points and points in shared memory 
              uint8_t* baseAddr = (uint8_t*)((LPWSTR)map.getBaseAddress() + 0);
              PointList* vecAddr = (PointList*)((LPWSTR)map.getBaseAddress() + 8);
-             *baseAddr = sizeof(points);
+             *baseAddr = points.size();
              *vecAddr = points;
 
              // Print points
-             printPoints(points);
+             //printPoints(points);
 
              // Set heartbeat
              *heartbeat = true;
