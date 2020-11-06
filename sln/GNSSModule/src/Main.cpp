@@ -39,14 +39,16 @@ int main(int argc, char** argv) {
 
             // Receive and parse GPS data
             std::string buffer = client.tcpReceive();
-            char** addr = (char**)((LPWSTR)map.getBaseAddress() + 10);
-            *addr = parseGPSData(buffer.substr(26));
-            std::cout << addr << " : " << *addr << std::endl;
+            char** addr = (char**)((LPWSTR)map.getBaseAddress());
+            //*addr = parseGPSData(buffer.substr(26));
+            //std::cout << addr << " : " << *addr << std::endl;
 
             // Set heartbeat
             *heartbeat = true;
             timer.time(tmr::TIMEOUT_4S);
         }
+
+        Sleep(500); // 500 ms refresh rate
     }
 
     client.tcpClose();

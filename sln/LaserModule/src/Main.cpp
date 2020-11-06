@@ -74,13 +74,15 @@ int main(int argc, char** argv) {
 
              // Receive and parse data
              std::string buffer = client.tcpReceive();
-             PointList* addr = (PointList*)((LPWSTR)map.getBaseAddress() + 10);
+             PointList* addr = (PointList*)((LPWSTR)map.getBaseAddress());
              *addr = parsePointCloud(buffer.substr(buffer.find("DIST1")));
 
              // Set heartbeat
              *heartbeat = true;
              timer.time(tmr::TIMEOUT_4S);
         }
+
+        Sleep(100); // 100 ms refresh rate
     }
 
     client.tcpClose();

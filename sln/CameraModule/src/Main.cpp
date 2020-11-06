@@ -32,6 +32,8 @@ int main(int argc, char** argv) {
             *heartbeat = true;
             timer.time(tmr::TIMEOUT_4S);
         }
+
+        Sleep(1000); // 1000 ms refresh rate
     }
 
     client.tcpClose();

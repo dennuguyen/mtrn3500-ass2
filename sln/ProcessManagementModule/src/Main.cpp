@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
 			}
 		}
 
-		Sleep(200);
+		Sleep(200); // 200ms refresh rate
 	}
 
 	return EXIT_SUCCESS;
