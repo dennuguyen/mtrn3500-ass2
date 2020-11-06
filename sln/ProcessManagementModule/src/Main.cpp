@@ -58,9 +58,16 @@ int main(int argc, char** argv) {
 	while (!_kbhit()) {
 		for (auto & process : processes) {
 
-			for (int i = 0; i < numModules; i++)
+			// Printing heartbeats
+			for (int i = 0; i < numModules; i++) {
 				std::cout << (*heartbeats)[i] << " ";
+			}
 			std::cout << std::endl;
+
+			if (process.first.minfo.name == mod::LASER.name) {
+				// Print laser data
+				std::cout << process.second.mappedViewAddr() << std::endl;
+			}
 
 			// Reset heartbeat
 			if ((*heartbeats)[process.first.minfo.heartbeat] == true) {
