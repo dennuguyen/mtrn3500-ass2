@@ -9,17 +9,17 @@
 int main(int argc, char** argv) {
 
     // Create file mapping object for this process
-    sm::FileMappingObject map(mod::LASER.name, sm::SIZE);
+    sm::FileMappingObject map(mod::CAMERA.name, sm::SIZE);
     map.openFileMapping();
     map.mappedViewAddr();
 
     // Create file mapping object to process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
     management.openFileMapping();
-    bool* heartbeat = (bool*)((char*)management.mappedViewAddr() + mod::LASER.heartbeat);
+    bool* heartbeat = (bool*)((char*)management.mappedViewAddr() + mod::CAMERA.heartbeat);
 
     // Create TCP client
-    tcp::TCPClient client(mod::LASER.ip, mod::LASER.port, mod::ZID);
+    tcp::TCPClient client(mod::CAMERA.ip, mod::CAMERA.port, mod::ZID);
     client.tcpConnect();
 
     // Create timer
