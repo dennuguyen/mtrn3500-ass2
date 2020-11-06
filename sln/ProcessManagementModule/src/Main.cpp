@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
 		processes.emplace_back(std::move(process), std::move(map));  // move process to vector
 	}
 
-	Sleep(1000); // give time for processes to set 
+	Sleep(1000); // give time for processes to startup
 
 	// Enter loop
 	while (!_kbhit()) {
@@ -68,18 +68,20 @@ int main(int argc, char** argv) {
 				process.first.timer.time(tmr::TIMEOUT_2S);
 			}
 
-			// Monitor processes
+			// Catch failed processes
 			else if (process.first.timer.expired()) {
 
 				if (process.first.minfo.name == mod::LASER.name ||
 					process.first.minfo.name == mod::CAMERA.name) {
 
 					std::wcout << process.first.minfo.name << " FAILED" << std::endl;
-					//exit(EXIT_FAILURE);
+					exit(EXIT_FAILURE);
 				}
 				else {
 					std::wcout << process.first.minfo.name << " RESTARTING" << std::endl;
+					process.first.kill();
 					process.first.start();
+					process.first.timer.time(tmr::TIMEOUT_2S);
 				}
 			}
 		}
