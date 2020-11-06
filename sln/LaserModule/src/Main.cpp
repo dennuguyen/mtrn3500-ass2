@@ -10,36 +10,7 @@
 
 typedef std::vector<std::pair<double, double>>  PointList;
 
-static PointList parsePointCloud(std::string data) {
-
-    // Tokenize data
-    std::stringstream dataStream;
-    dataStream << data;
-    std::vector<std::string> dataVector = { std::istream_iterator<std::string>{dataStream}, std::istream_iterator<std::string>{} };
-
-    // Check valid data
-    if (dataVector.at(0) != "DIST1") {
-        std::cerr << "ERROR: Incorrect data format" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    
-    // Get info
-    double scalingFactor = std::stod(dataVector.at(1));
-    double scalingOffset = std::stod(dataVector.at(2)); // always zero
-    double angle = std::stoi(dataVector.at(3)) / 10000.0;
-    double stepWidth = std::stoi(dataVector.at(4)) / 10000.0;
-    int numData = std::stoi(dataVector.at(5));
-    
-    // Parse data
-    std::vector<std::pair<double, double>> coords;
-    for (int i = 6; i < numData + 6; i++) {
-        ULONG radius = std::stol(dataVector.at(i), nullptr, 16);
-        coords.push_back({radius * cos(angle), radius * sin(angle) });
-        angle += stepWidth;
-    }
-
-    return coords;
-}
+static PointList parsePointCloud(std::string data);
 
 int main(int argc, char** argv) {
 
@@ -88,4 +59,35 @@ int main(int argc, char** argv) {
     client.tcpClose();
 
     return EXIT_SUCCESS;
+}
+
+static PointList parsePointCloud(std::string data) {
+
+    // Tokenize data
+    std::stringstream dataStream;
+    dataStream << data;
+    std::vector<std::string> dataVector = { std::istream_iterator<std::string>{dataStream}, std::istream_iterator<std::string>{} };
+
+    // Check valid data
+    if (dataVector.at(0) != "DIST1") {
+        std::cerr << "ERROR: Incorrect data format" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    // Get info
+    double scalingFactor = std::stod(dataVector.at(1));
+    double scalingOffset = std::stod(dataVector.at(2));         // always zero
+    double angle = std::stoi(dataVector.at(3)) / 10000.0 - 90;  // subtract 90 to correct reference frame orientation
+    double stepWidth = std::stoi(dataVector.at(4)) / 10000.0;
+    int numData = std::stoi(dataVector.at(5));
+
+    // Parse data
+    std::vector<std::pair<double, double>> coords;
+    for (int i = 6; i < numData + 6; i++) {
+        ULONG radius = std::stol(dataVector.at(i), nullptr, 16);
+        coords.push_back({ radius * cos(angle), radius * sin(angle) });
+        angle += stepWidth;
+    }
+
+    return coords;
 }
