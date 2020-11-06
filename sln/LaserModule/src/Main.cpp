@@ -54,8 +54,8 @@ int main(int argc, char** argv) {
     bool* heartbeat = (bool*)((char*)management.mappedViewAddr() + mod::LASER.heartbeat);
 
     // Create TCP client
-    //tcp::TCPClient client(mod::LASER.ip, mod::LASER.port, mod::ZID);
-    //client.tcpConnect();
+    tcp::TCPClient client(mod::LASER.ip, mod::LASER.port, mod::ZID);
+    client.tcpConnect();
 
     // Create timer
     tmr::Timer timer;
@@ -63,24 +63,27 @@ int main(int argc, char** argv) {
 
     while (!timer.expired()) {
         if (*heartbeat == false) {
-           //std::stringstream request;
-           //request << (char)0x02 << "sRN LMDscandata" << (char)0x03;
-           //client.tcpSend(request.str());
+            
+            // Request laser scan data
+            std::stringstream request;
+            request << (char)0x02 << "sRN LMDscandata" << (char)0x03;
+            client.tcpSend(request.str());
 
-            Sleep(500);
+            // Give server time to prepare data
+             Sleep(500);
 
-            //std::string buffer = client.tcpReceive();
-            //PointList* addr = (PointList*)((LPWSTR)map.getBaseAddress() + 10);
-            //*addr = parsePointCloud(buffer.substr(buffer.find("DIST1")));
+             // Receive and parse data
+             std::string buffer = client.tcpReceive();
+             PointList* addr = (PointList*)((LPWSTR)map.getBaseAddress() + 10);
+             *addr = parsePointCloud(buffer.substr(buffer.find("DIST1")));
 
-
-            // Set heartbeat
-            *heartbeat = true;
-            timer.time(tmr::TIMEOUT_4S);
+             // Set heartbeat
+             *heartbeat = true;
+             timer.time(tmr::TIMEOUT_4S);
         }
     }
 
-    //client.tcpClose();
+    client.tcpClose();
 
     return EXIT_SUCCESS;
 }
