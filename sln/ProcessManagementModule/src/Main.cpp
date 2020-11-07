@@ -22,8 +22,9 @@ constexpr int numModules = 5;
 static void printHeartbeats(bool* heartbeats[]);
 
 int main(int argc, char** argv) {
+
     // Create the job manager
-    //JobManager jm;
+    JobManager jm;
 
     // Set up process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
@@ -41,7 +42,10 @@ int main(int argc, char** argv) {
     for (mod::ModuleInfo minfo : mod::STARTUP) {
 
         Process process(minfo);  // create new process
-        //jm.attachProcess(process);  // add process to job manager
+
+        // Only add display module to job manager
+        if (process.minfo.name == mod::DISPLAY.name)
+            jm.attachProcess(process);
 
         sm::FileMappingObject map(minfo.name, sm::SIZE);  // create file mapping object for new process
         map.createFileMapping();                          // create file mapping object handle
@@ -55,8 +59,13 @@ int main(int argc, char** argv) {
     // Enter loop
     while (!_kbhit()) {
         for (auto& process : processes) {
+
+            // Skip display module
+            if (process.first.minfo.name == mod::DISPLAY.name)
+                continue;
+
             // Printing heartbeats
-            //printHeartbeats(heartbeats);
+            printHeartbeats(heartbeats);
 
             // Camera data
             if (process.first.minfo.name == mod::CAMERA.name) {
