@@ -17,8 +17,6 @@
 #include "Process.hpp"
 #include "SharedMemory.hpp"
 
-typedef std::array<std::pair<double, double>, 200>  PointList;
-
 constexpr int numModules = 5;
 
 static void printHeartbeats(bool* heartbeats[]);
@@ -66,8 +64,7 @@ int main(int argc, char** argv) {
 
             if (process.first.minfo.name == mod::LASER.name) {
                 uint16_t* length = (uint16_t*)((char*)process.second.getBaseAddress());
-                PointList* points = (PointList*)((char*)process.second.getBaseAddress() + 16);
-                std::cout << *length << std::endl;
+                std::pair<double, double>* points = (std::pair<double, double>*)((char*)process.second.getBaseAddress() + 16);
             }
 
             // Reset heartbeat
