@@ -1,13 +1,17 @@
 #include <Winsock2.h>
 
+#include <conio.h>
+#include <future>
 #include <iostream>
 #include <sstream>
+#include <thread>
 
 #include "Modules.hpp"
 #include "SharedMemory.hpp"
 #include "TCPClient.hpp"
 #include "Timer.hpp"
 
+static std::tuple<double, double, bool> teleopInput();
 static double limit(double value, double min, double max);
 
 int main(int argc, char** argv) {
@@ -29,18 +33,19 @@ int main(int argc, char** argv) {
     tmr::Timer timer;
     timer.time(tmr::TIMEOUT_4S);
 
+    // Create thread for nonblocking teleop
+    std::future<std::tuple<double, double, bool>> teleop = std::async(&teleopInput);
+
     while (!timer.expired()) {
         if (*heartbeat == false) {
+
+            double steer = 20.0;
+            double speed = 0.3;
+            bool flag = 1;
             
             // Get teleop values
-            double steer, speed;
-            bool flag;
-            std::cout << "<steer> <speed> <flag> ";
-            std::cin >> steer >> speed >> flag;
+            // auto [steer, speed, flag] = teleop.get();
 
-            steer = limit(steer, -40, 40);
-            speed = limit(speed, -1, 1);
-            
             // Send teleop
             std::cout << "Sending command" << std::endl;
             std::stringstream command;
@@ -65,6 +70,21 @@ int main(int argc, char** argv) {
     client.tcpClose();
 
     return EXIT_SUCCESS;
+}
+
+static std::tuple<double, double, bool> teleopInput() {
+
+    // Get teleop values
+    double steer, speed;
+    bool flag;
+    std::cout << "<steer> <speed> <flag> ";
+    std::cin >> steer >> speed >> flag;
+
+    // Limit teleop values
+    steer = limit(steer, -40, 40);
+    speed = limit(speed, -1, 1);
+
+    return {steer, speed, flag};
 }
 
 /**
