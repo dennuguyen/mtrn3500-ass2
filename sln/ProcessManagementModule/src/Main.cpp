@@ -62,9 +62,15 @@ int main(int argc, char** argv) {
             // Printing heartbeats
             //printHeartbeats(heartbeats);
 
+            // Laser scan data
             if (process.first.minfo.name == mod::LASER.name) {
                 uint16_t* length = (uint16_t*)((char*)process.second.getBaseAddress());
                 std::pair<double, double>* points = (std::pair<double, double>*)((char*)process.second.getBaseAddress() + 16);
+            }
+
+            // GPS data
+            if (process.first.minfo.name == mod::GPS.name) {
+                uint16_t* gps = (uint16_t*)((char*)process.second.getBaseAddress());
             }
 
             // Reset heartbeat
