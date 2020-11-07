@@ -16,6 +16,7 @@
 #include "Modules.hpp"
 #include "Process.hpp"
 #include "SharedMemory.hpp"
+#include "Timer.hpp"
 
 constexpr int numModules = 6;
 
@@ -102,7 +103,12 @@ int main(int argc, char** argv) {
                     std::wcout << process.first.minfo.name << " RESTARTING" << std::endl;
                     process.first.kill();
                     process.first.start();
-                    process.first.timer.time(tmr::TIMEOUT_4S);
+
+                    // Reset timer
+                    if (process.first.minfo.name == mod::TELEOP.name)
+                        process.first.timer.time(tmr::TIMEOUT_30S);
+                    else
+                        process.first.timer.time(tmr::TIMEOUT_4S);
                 }
             }
         }
