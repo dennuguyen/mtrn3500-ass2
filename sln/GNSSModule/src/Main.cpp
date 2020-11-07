@@ -7,10 +7,6 @@
 #include "SharedMemory.hpp"
 #include "TCPClient.hpp"  // #include <Winsock2.h>
 #include "Timer.hpp"
-
-
-#define CRC32_POLYNOMIAL			0xEDB88320L
-
 unsigned long CRC32Value(int i)
 {
     int j;
@@ -19,17 +15,15 @@ unsigned long CRC32Value(int i)
     for (j = 8; j > 0; j--)
     {
         if (ulCRC & 1)
-            ulCRC = (ulCRC >> 1) ^ CRC32_POLYNOMIAL;
+            ulCRC = (ulCRC >> 1) ^ 0xEDB88320L;
         else
             ulCRC >>= 1;
     }
     return ulCRC;
 }
-/* --------------------------------------------------------------------------
-Calculates the CRC-32 of a block of data all at once
--------------------------------------------------------------------------- */
+
 unsigned long CalculateBlockCRC32(unsigned long ulCount, /* Number of bytes in the data block */
-    unsigned char* ucBuffer) /* Data block */
+    const unsigned char* ucBuffer) /* Data block */
 {
     unsigned long ulTemp1;
     unsigned long ulTemp2;
@@ -42,15 +36,16 @@ unsigned long CalculateBlockCRC32(unsigned long ulCount, /* Number of bytes in t
     }
     return(ulCRC);
 }
-
-
 struct OEM4 {
     double northing;
     double easting;
     double height;
+    uint32_t _garbage1;
+    uint8_t _garbage2;
+    uint32_t crc;
 };
 
-static bool checkCRC32(char* data);
+static bool checkCRC32(const unsigned char* data, int n);
 static void printGPSData(OEM4 oem4, unsigned int crc);
 
 int main(int argc, char** argv) {
@@ -79,20 +74,20 @@ int main(int argc, char** argv) {
             Sleep(500);
 
             // Receive GPS data
-            char* buffer = (char*)(client.tcpReceive());
-            
-            std::cout << CalculateBlockCRC32(108, (unsigned char*)buffer) << std::endl;
+            unsigned char* buffer = (unsigned char*)(client.tcpReceive());
+            unsigned char headerLength = *(buffer + 3);
 
             // Consider non-corrupt GPS data
-            if (checkCRC32(buffer) == true) {
+            if (checkCRC32(buffer, 108) == false) {
 
                 // Process GPS data and store in shared memory
                 OEM4* oem4 = ((OEM4*)map.getBaseAddress());
-                *oem4 = *(OEM4*)((char*)buffer + 44);
-                unsigned int crc = (unsigned int)(buffer + 108);
+                *oem4 = *(OEM4*)((char*)buffer + headerLength + 16);
+                std::cout << oem4->crc << std::endl;
+                uint32_t crc = (uint32_t)(buffer + headerLength + 80);
 
                 // Print GPS data
-                printGPSData(*oem4, crc);
+                // printGPSData(*oem4, crc);
             }
 
             // Set heartbeat
@@ -108,23 +103,32 @@ int main(int argc, char** argv) {
     return EXIT_SUCCESS;
 }
 
-static bool checkCRC32(char* data) {
+/**
+ * CRC-32 algorithm
+ */
+static bool checkCRC32(const unsigned char* data, int n) {
 
-    unsigned int crc32 = 0xFFFFFFFF;
+    uint32_t crc32 = 0xFFFFFFFF;
 
-    for (char* byte = data; *byte != '\0'; *(byte++)) {
-        crc32 ^= *byte;
+    for (int i = 0; i < n; i++) {
+        char ch = data[i];
 
-        for (int i = 7; i >= 0; i--)
-            crc32 = (crc32 >> 1) ^ (0xEDB88320L & (crc32 & 1));
+        for (int j = 0; j < 8; j++) {
+            crc32 >>= 1;
+            if ((ch ^ crc32) & 1)
+                crc32 ^= 0xEDB88320;
+            ch >>= 1;
+        }
     }
+    std::cout << ~crc32 << " " << (uint32_t)(data + 108) << " " << CalculateBlockCRC32(n, data) << std::endl;
 
-    std::cout << ~crc32 << " " << (unsigned int)(data + 108) << std::endl;
-
-    return ~crc32 == (unsigned int)(data + 109);
+    return ~crc32 == (uint32_t)(data + 108);
 }
 
+/**
+ * Print GPS data which includes Northing, Easting, Height and CRC
+ */
 static void printGPSData(OEM4 oem4, unsigned int crc) {
     std::cout << "(N: " << oem4.northing << ", E: " << oem4.easting << ", H: " << oem4.height << ")";
-    std::cout << "\tCRC: " << crc << std::endl;
+    std::cout << " + CRC: " << crc << std::endl;
 }

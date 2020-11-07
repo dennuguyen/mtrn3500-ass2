@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
     processes.reserve(numModules);
     for (mod::ModuleInfo minfo : mod::STARTUP) {
 
-        if (minfo.name != mod::TELEOP.name && minfo.name != mod::LASER.name)
+        if (minfo.name != mod::GPS.name)
             continue;
 
         Process process(minfo);  // create new process
