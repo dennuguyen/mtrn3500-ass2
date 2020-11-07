@@ -1,6 +1,7 @@
+#include <Winsock2.h>
+
 #include <iostream>
 #include <sstream>
-#include <Winsock2.h>
 
 #include "Modules.hpp"
 #include "SharedMemory.hpp"
@@ -12,7 +13,6 @@ static char* parseGPSData(std::string data) {
 }
 
 int main(int argc, char** argv) {
-
     // Create file mapping object for this process
     sm::FileMappingObject map(mod::GPS.name, sm::SIZE);
     map.openFileMapping();
@@ -33,7 +33,6 @@ int main(int argc, char** argv) {
 
     while (!timer.expired()) {
         if (*heartbeat == false) {
-
             // Wait for no reason
             Sleep(500);
 
@@ -48,10 +47,10 @@ int main(int argc, char** argv) {
             timer.time(tmr::TIMEOUT_4S);
         }
 
-        Sleep(500); // 500 ms refresh rate
+        Sleep(500);  // 500 ms refresh rate
     }
 
     client.tcpClose();
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

@@ -1,5 +1,6 @@
-#include <iostream>
 #include <Winsock2.h>
+
+#include <iostream>
 
 #include "Modules.hpp"
 #include "SharedMemory.hpp"
@@ -7,7 +8,6 @@
 #include "Timer.hpp"
 
 int main(int argc, char** argv) {
-
     // Create file mapping object for this process
     sm::FileMappingObject map(mod::CAMERA.name, sm::SIZE);
     map.openFileMapping();
@@ -33,10 +33,10 @@ int main(int argc, char** argv) {
             timer.time(tmr::TIMEOUT_4S);
         }
 
-        Sleep(1000); // 1000 ms refresh rate
+        Sleep(1000);  // 1000 ms refresh rate
     }
 
     client.tcpClose();
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

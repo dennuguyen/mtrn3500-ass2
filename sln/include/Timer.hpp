@@ -1,8 +1,9 @@
 #ifndef TIMER_HPP_
 #define TIMER_HPP_
 
-#include <chrono>
 #include <cassert>
+#include <chrono>
+#include <iostream>
 
 using namespace std::chrono_literals;
 
@@ -23,7 +24,7 @@ class Timer {
 
     bool expired() {
         return std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::system_clock::now() - ref) > exp;
+                   std::chrono::system_clock::now() - ref) > exp;
     }
 
     void print() {
@@ -31,7 +32,7 @@ class Timer {
         std::cout << "Expiry: " << exp.count() << "s" << std::endl;
     }
 
-   //private:
+   private:
     std::chrono::system_clock::time_point ref;  // Time of reference
     std::chrono::milliseconds exp;              // Expiry duration
 };
