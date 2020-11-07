@@ -1,8 +1,42 @@
+#include <Winsock2.h>
+
 #include <iostream>
 
+#include "Modules.hpp"
+#include "SharedMemory.hpp"
+#include "TCPClient.hpp"
+#include "Timer.hpp"
+
 int main(int argc, char** argv) {
+    // Create file mapping object for this process
+    sm::FileMappingObject map(mod::TELEOP.name, sm::SIZE);
+    map.openFileMapping();
+    map.mappedViewAddr();
 
-	std::cin.ignore();
+    // Create file mapping object to process management
+    sm::FileMappingObject management(mod::TELEOP.name, sm::SIZE);
+    management.openFileMapping();
+    bool* heartbeat = (bool*)((char*)management.mappedViewAddr() + mod::TELEOP.heartbeat);
 
-	return 0;
+    // Create TCP client
+    tcp::TCPClient client(mod::TELEOP.ip, mod::TELEOP.port, mod::ZID);
+    client.tcpConnect();
+
+    // Create timer
+    tmr::Timer timer;
+    timer.time(tmr::TIMEOUT_4S);
+
+    while (!timer.expired()) {
+        if (*heartbeat == false) {
+            // Set heartbeat
+            *heartbeat = true;
+            timer.time(tmr::TIMEOUT_4S);
+        }
+
+        Sleep(1000);  // 1000 ms refresh rate
+    }
+
+    client.tcpClose();
+
+    return EXIT_SUCCESS;
 }
