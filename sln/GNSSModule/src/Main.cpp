@@ -74,6 +74,7 @@ int main(int argc, char** argv) {
 
     while (!timer.expired()) {
         if (*heartbeat == false) {
+
             // Wait for no reason
             Sleep(500);
 
