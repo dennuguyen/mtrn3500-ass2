@@ -17,7 +17,7 @@
 #include "Process.hpp"
 #include "SharedMemory.hpp"
 
-constexpr int numModules = 5;
+constexpr int numModules = 6;
 
 static void printHeartbeats(bool* heartbeats[]);
 
@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 
     // Setup heartbeat map
     bool* heartbeats[numModules];
-    *heartbeats = (bool*)(LPWSTR)management.mappedViewAddr();
+    *heartbeats = (bool*)(char*)management.mappedViewAddr();
     for (int i = 0; i < numModules; i++)
         (*heartbeats)[i] = {true};
 
@@ -40,6 +40,9 @@ int main(int argc, char** argv) {
     std::vector<std::pair<Process, sm::FileMappingObject>> processes;
     processes.reserve(numModules);
     for (mod::ModuleInfo minfo : mod::STARTUP) {
+
+        if (minfo.name != mod::TELEOP.name && minfo.name != mod::LASER.name)
+            continue;
 
         Process process(minfo);  // create new process
 
@@ -60,10 +63,6 @@ int main(int argc, char** argv) {
     while (!_kbhit()) {
         for (auto& process : processes) {
 
-            // Skip display module
-            if (process.first.minfo.name == mod::DISPLAY.name)
-                continue;
-
             // Printing heartbeats
             printHeartbeats(heartbeats);
 
@@ -83,6 +82,10 @@ int main(int argc, char** argv) {
                 uint16_t* gps = (uint16_t*)((char*)process.second.getBaseAddress());
             }
 
+            // Skip display module
+            if (process.first.minfo.name == mod::DISPLAY.name)
+                continue;
+
             // Reset heartbeat
             if ((*heartbeats)[process.first.minfo.heartbeat] == true) {
                 (*heartbeats)[process.first.minfo.heartbeat] = false;
@@ -99,7 +102,7 @@ int main(int argc, char** argv) {
                     std::wcout << process.first.minfo.name << " RESTARTING" << std::endl;
                     process.first.kill();
                     process.first.start();
-                    process.first.timer.time(tmr::TIMEOUT_2S);
+                    process.first.timer.time(tmr::TIMEOUT_4S);
                 }
             }
         }
@@ -115,7 +118,7 @@ int main(int argc, char** argv) {
             std::wcout << std::endl << std::endl;*/
 
 static void printHeartbeats(bool* heartbeats[]) {
-    std::cout << "C D G L T" << std::endl;
+    std::cout << "C D G L M T" << std::endl;
     for (int i = 0; i < numModules; i++)
         std::cout << (*heartbeats)[i] << " ";
     std::cout << std::endl << std::endl;
