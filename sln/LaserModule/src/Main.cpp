@@ -45,22 +45,22 @@ int main(int argc, char** argv) {
             client.tcpSend(request.str());
 
             // Give server time to prepare data
-             Sleep(500);
+            Sleep(500);
 
-             // Receive laser scan data
-             std::string buffer = client.tcpReceive();
+            // Receive laser scan data
+            std::string buffer = client.tcpReceive();
 
-             // Process and store laser scan data in shared memory
-             uint16_t* length = (uint16_t*)((char*)map.getBaseAddress());
-             PointList* points = (PointList*)((char*)map.getBaseAddress() + 16);
-             *length = parsePointCloud(buffer, points);
+            // Process and store laser scan data in shared memory
+            uint16_t* length = (uint16_t*)((char*)map.getBaseAddress());
+            PointList* points = (PointList*)((char*)map.getBaseAddress() + 16);
+            *length = parsePointCloud(buffer, points);
 
-             // Print points
-             printPoints(*points);
+            // Print points
+            printPoints(*points);
 
-             // Set heartbeat
-             *heartbeat = true;
-             timer.time(tmr::TIMEOUT_4S);
+            // Set heartbeat
+            *heartbeat = true;
+            timer.time(tmr::TIMEOUT_4S);
         }
 
         Sleep(100); // 100 ms refresh rate
