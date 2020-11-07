@@ -8,6 +8,8 @@
 #include "TCPClient.hpp"
 #include "Timer.hpp"
 
+static double limit(double value, double min, double max);
+
 int main(int argc, char** argv) {
     // Create file mapping object for this process
     sm::FileMappingObject map(mod::TELEOP.name, sm::SIZE);
@@ -25,14 +27,24 @@ int main(int argc, char** argv) {
 
     // Create timer
     tmr::Timer timer;
-    timer.time(tmr::TIMEOUT_4S);
+    timer.time(tmr::TIMEOUT_10S);
 
     while (!timer.expired()) {
         if (*heartbeat == false) {
             
+            // Get teleop values
+            double steer, speed;
+            bool flag;
+            std::cout << "<steer> <speed> <flag> ";
+            std::cin >> steer >> speed >> flag;
+
+            steer = limit(steer, -40, 40);
+            speed = limit(speed, -1, 1);
+            
             // Send teleop
+            std::cout << "Sending command" << std::endl;
             std::stringstream command;
-            command << "# 20 0.5 1 #";
+            command << "# " << steer << " " << speed << " " << flag << " #";
             std::cout << client.tcpSend(command.str()) << std::endl;
 
             // Give server time to prepare data
@@ -44,7 +56,7 @@ int main(int argc, char** argv) {
             */
             // Set heartbeat
             *heartbeat = true;
-            timer.time(tmr::TIMEOUT_4S);
+            timer.time(tmr::TIMEOUT_10S);
         }
 
         Sleep(100);  // 100 ms refresh rate
@@ -55,3 +67,13 @@ int main(int argc, char** argv) {
     return EXIT_SUCCESS;
 }
 
+/**
+ * Limit some value by min and max
+ */
+static double limit(double value, double min, double max) {
+    if (value > max)
+        return max;
+    if (value < min)
+        return min;
+    return value;
+}
