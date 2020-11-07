@@ -1,3 +1,4 @@
+#include <Windows.h>
 #include <Winsock2.h>
 
 #include <iostream>
@@ -7,11 +8,11 @@
 #include "TCPClient.hpp"
 #include "Timer.hpp"
 
+static void openImage() {
+
+}
+
 int main(int argc, char** argv) {
-    // Create file mapping object for this process
-    sm::FileMappingObject map(mod::CAMERA.name, sm::SIZE);
-    map.openFileMapping();
-    map.mappedViewAddr();
 
     // Create file mapping object to process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
@@ -28,6 +29,14 @@ int main(int argc, char** argv) {
 
     while (!timer.expired()) {
         if (*heartbeat == false) {
+
+            // Receive and process camera data
+            char* buffer = client.tcpReceive();
+
+
+            // View camera image
+            
+
             // Set heartbeat
             *heartbeat = true;
             timer.time(tmr::TIMEOUT_4S);
