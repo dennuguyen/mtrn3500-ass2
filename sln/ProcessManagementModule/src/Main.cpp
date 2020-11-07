@@ -39,10 +39,6 @@ int main(int argc, char** argv) {
     std::vector<std::pair<Process, sm::FileMappingObject>> processes;
     processes.reserve(numModules);
     for (mod::ModuleInfo minfo : mod::STARTUP) {
-        if (minfo.name == mod::LASER.name || minfo.name == mod::GPS.name || minfo.name == mod::CAMERA.name)
-            ;
-        else
-            continue;
 
         Process process(minfo);  // create new process
         //jm.attachProcess(process);  // add process to job manager
