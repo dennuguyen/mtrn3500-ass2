@@ -1,4 +1,3 @@
-#include <Windows.h>
 #include <Winsock2.h>
 
 #include <iostream>
@@ -31,7 +30,7 @@ int main(int argc, char** argv) {
         if (*heartbeat == false) {
 
             // Receive and process camera data
-            char* buffer = client.tcpReceive();
+            //char* buffer = client.tcpReceive();
 
 
             // View camera image
