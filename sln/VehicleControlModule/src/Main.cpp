@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 
     // Create timer
     tmr::Timer timer;
-    timer.time(tmr::TIMEOUT_10S);
+    timer.time(tmr::TIMEOUT_4S);
 
     while (!timer.expired()) {
         if (*heartbeat == false) {
@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
             */
             // Set heartbeat
             *heartbeat = true;
-            timer.time(tmr::TIMEOUT_10S);
+            timer.time(tmr::TIMEOUT_4S);
         }
 
         Sleep(100);  // 100 ms refresh rate
