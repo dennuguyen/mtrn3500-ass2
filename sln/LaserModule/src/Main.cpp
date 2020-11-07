@@ -13,7 +13,7 @@
 
 typedef std::array<std::pair<double, double>, 200>  PointList;
 
-static PointList* parsePointCloud(std::string data);
+static int parsePointCloud(std::string data, PointList* coords);
 static void printPoints(PointList coords);
 
 int main(int argc, char** argv) {
@@ -49,11 +49,9 @@ int main(int argc, char** argv) {
 
              // Receive and parse data
              std::string buffer = client.tcpReceive();
-             PointList* points = parsePointCloud(buffer.substr(buffer.find("DIST1")));
-
-             // Put array of points in shared memory 
-             PointList* vecAddr = (PointList*)((char*)map.getBaseAddress());
-             *vecAddr = *points;
+             uint16_t* length = (uint16_t*)((char*)map.getBaseAddress());
+             PointList* points = (PointList*)((char*)map.getBaseAddress() + 16);
+             *length = parsePointCloud(buffer, points);
 
              // Print points
              printPoints(*points);
@@ -71,11 +69,11 @@ int main(int argc, char** argv) {
     return EXIT_SUCCESS;
 }
 
-static PointList* parsePointCloud(std::string data) {
+static int parsePointCloud(std::string data, PointList* coords) {
 
     // Tokenize data
     std::stringstream dataStream;
-    dataStream << data;
+    dataStream << data.substr(data.find("DIST1"));
     std::vector<std::string> dataVector = { std::istream_iterator<std::string>{dataStream}, std::istream_iterator<std::string>{} };
 
     // Check valid data
@@ -92,14 +90,13 @@ static PointList* parsePointCloud(std::string data) {
     int numData = std::stoi(dataVector.at(5));
 
     // Parse data
-    PointList* coords{};
     for (int i = 6; i < numData + 6; i++) {
         ULONG radius = std::stol(dataVector.at(i), nullptr, 16);
-        (*coords)[numData] = { radius * cos(angle), radius * sin(angle) };
+        (*coords)[i] = { radius * cos(angle), radius * sin(angle) };
         angle += stepWidth;
     }
-    
-    return coords;
+
+    return numData;
 }
 
 static void printPoints(PointList coords) {

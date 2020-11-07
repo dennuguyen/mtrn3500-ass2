@@ -65,11 +65,9 @@ int main(int argc, char** argv) {
             //printHeartbeats(heartbeats);
 
             if (process.first.minfo.name == mod::LASER.name) {
-                PointList* points = (PointList*)((char*)process.second.getBaseAddress());
-                std::cout << points << std::endl;
-                for (const auto& point : *points) {
-                    std::cout << point.first << "\t" << point.second << std::endl;
-                }
+                uint16_t* length = (uint16_t*)((char*)process.second.getBaseAddress());
+                PointList* points = (PointList*)((char*)process.second.getBaseAddress() + 16);
+                std::cout << *length << std::endl;
             }
 
             // Reset heartbeat
@@ -83,7 +81,7 @@ int main(int argc, char** argv) {
                 if (process.first.minfo.name == mod::LASER.name ||
                     process.first.minfo.name == mod::CAMERA.name) {
                     std::wcout << process.first.minfo.name << " FAILED" << std::endl;
-                    exit(EXIT_FAILURE);
+                    //exit(EXIT_FAILURE);
                 } else {
                     std::wcout << process.first.minfo.name << " RESTARTING" << std::endl;
                     process.first.kill();
