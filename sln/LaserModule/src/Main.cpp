@@ -1,13 +1,14 @@
+#include <Winsock2.h>
+
 #include <iostream>
+#include <iomanip>
 #include <iterator>
 #include <sstream>
-#include <Winsock2.h>
 
 #include "Modules.hpp"
 #include "SharedMemory.hpp"
 #include "TCPClient.hpp"  // #include <Winsock2.h>
 #include "Timer.hpp"
-#include <iomanip>
 
 typedef std::vector<std::pair<double, double>>  PointList;
 
@@ -50,8 +51,8 @@ int main(int argc, char** argv) {
              PointList points = parsePointCloud(buffer.substr(buffer.find("DIST1")));
 
              // Put number of points and points in shared memory 
-             uint8_t* baseAddr = (uint8_t*)((LPWSTR)map.getBaseAddress() + 0);
-             PointList* vecAddr = (PointList*)((LPWSTR)map.getBaseAddress() + 8);
+             uint8_t* baseAddr = (uint8_t*)((char*)map.getBaseAddress() + 0);
+             PointList* vecAddr = (PointList*)((char*)map.getBaseAddress() + 8);
              *baseAddr = points.size();
              *vecAddr = points;
 

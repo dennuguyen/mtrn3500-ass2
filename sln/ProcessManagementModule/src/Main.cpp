@@ -16,6 +16,8 @@
 #include "Process.hpp"
 #include "SharedMemory.hpp"
 
+typedef std::vector<std::pair<double, double>>  PointList;
+
 constexpr int numModules = 5;
 
 static void printHeartbeats(bool* heartbeats[]);
@@ -62,18 +64,21 @@ int main(int argc, char** argv) {
             printHeartbeats(heartbeats);
 
             if (process.first.minfo.name == mod::LASER.name) {
-                int numPoints = *(uint8_t*)process.second.mappedViewAddr();
+                std::cout << process.second.getBaseAddress() << std::endl;
+                /*
+                int numPoints = *(uint8_t*)process.second.getBaseAddress();
                 std::cout << numPoints;
-                std::vector<std::pair<double, double>>* points = (std::vector<std::pair<double, double>>*)((char*)process.second.mappedViewAddr() + 8);
-                for (const auto& point : *points) {
-                    std::cout << point.first << "\t" << point.second << std::endl;
-                }
+
+                PointList* pp = (PointList*)((char*)process.second.getBaseAddress() + 8);
+                for (const auto& p : *pp) {
+                    std::cout << p.first << "\t" << p.second << std::endl;
+                }*/
             }
 
             // Reset heartbeat
             if ((*heartbeats)[process.first.minfo.heartbeat] == true) {
                 (*heartbeats)[process.first.minfo.heartbeat] = false;
-                process.first.timer.time(tmr::TIMEOUT_2S);
+                process.first.timer.time(tmr::TIMEOUT_4S);
             }
 
             // Catch failed processes
@@ -98,8 +103,8 @@ int main(int argc, char** argv) {
 }
 
 /*std::wcout << std::setw(24) << std::right << process.first;
-			std::wcout << std::setw(6) << std::right << (process.first.isAlive() ? L"Alive" : L"Dead");
-			std::wcout << std::endl << std::endl;*/
+            std::wcout << std::setw(6) << std::right << (process.first.isAlive() ? L"Alive" : L"Dead");
+            std::wcout << std::endl << std::endl;*/
 
 static void printHeartbeats(bool* heartbeats[]) {
     std::cout << "C D G L T" << std::endl;
