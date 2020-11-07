@@ -10,7 +10,10 @@ using namespace std::chrono_literals;
 namespace tmr {
 constexpr auto TIMEOUT_1S = 1s;
 constexpr auto TIMEOUT_2S = 2s;
+constexpr auto TIMEOUT_3S = 3s;
 constexpr auto TIMEOUT_4S = 4s;
+constexpr auto TIMEOUT_5S = 5s;
+constexpr auto TIMEOUT_10S = 10s;
 
 class Timer {
    public:
