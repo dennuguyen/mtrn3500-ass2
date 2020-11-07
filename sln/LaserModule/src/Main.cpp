@@ -47,8 +47,10 @@ int main(int argc, char** argv) {
             // Give server time to prepare data
              Sleep(500);
 
-             // Receive and parse data
+             // Receive laser scan data
              std::string buffer = client.tcpReceive();
+
+             // Process and store laser scan data in shared memory
              uint16_t* length = (uint16_t*)((char*)map.getBaseAddress());
              PointList* points = (PointList*)((char*)map.getBaseAddress() + 16);
              *length = parsePointCloud(buffer, points);
@@ -69,6 +71,10 @@ int main(int argc, char** argv) {
     return EXIT_SUCCESS;
 }
 
+/**
+ * Process the point cloud data from polar to cartesian coordinates which are stored in coords. Returns 
+ * the length of the coords array.
+ */
 static int parsePointCloud(std::string data, PointList* coords) {
 
     // Tokenize data
@@ -99,6 +105,9 @@ static int parsePointCloud(std::string data, PointList* coords) {
     return numData;
 }
 
+/**
+ * Prints the coordinates
+ */
 static void printPoints(PointList coords) {
     for (const auto & [x, y] : coords)
         std::cout << "(" << x << ", " << y << ")" << std::endl;
