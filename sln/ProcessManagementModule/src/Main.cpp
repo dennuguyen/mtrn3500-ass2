@@ -7,6 +7,7 @@
 #include <Windows.h>
 #include <conio.h>
 
+#include <array>
 #include <iomanip>
 #include <iostream>
 #include <vector>
@@ -16,7 +17,7 @@
 #include "Process.hpp"
 #include "SharedMemory.hpp"
 
-typedef std::vector<std::pair<double, double>>  PointList;
+typedef std::array<std::pair<double, double>, 200>  PointList;
 
 constexpr int numModules = 5;
 
@@ -61,18 +62,14 @@ int main(int argc, char** argv) {
     while (!_kbhit()) {
         for (auto& process : processes) {
             // Printing heartbeats
-            printHeartbeats(heartbeats);
+            //printHeartbeats(heartbeats);
 
             if (process.first.minfo.name == mod::LASER.name) {
-                std::cout << process.second.getBaseAddress() << std::endl;
-                /*
-                int numPoints = *(uint8_t*)process.second.getBaseAddress();
-                std::cout << numPoints;
-
-                PointList* pp = (PointList*)((char*)process.second.getBaseAddress() + 8);
-                for (const auto& p : *pp) {
-                    std::cout << p.first << "\t" << p.second << std::endl;
-                }*/
+                PointList* points = (PointList*)((char*)process.second.getBaseAddress());
+                std::cout << points << std::endl;
+                for (const auto& point : *points) {
+                    std::cout << point.first << "\t" << point.second << std::endl;
+                }
             }
 
             // Reset heartbeat

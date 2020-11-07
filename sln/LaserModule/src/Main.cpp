@@ -1,5 +1,6 @@
 #include <Winsock2.h>
 
+#include <array>
 #include <iostream>
 #include <iomanip>
 #include <iterator>
@@ -10,9 +11,9 @@
 #include "TCPClient.hpp"  // #include <Winsock2.h>
 #include "Timer.hpp"
 
-typedef std::vector<std::pair<double, double>>  PointList;
+typedef std::array<std::pair<double, double>, 200>  PointList;
 
-static PointList parsePointCloud(std::string data);
+static PointList* parsePointCloud(std::string data);
 static void printPoints(PointList coords);
 
 int main(int argc, char** argv) {
@@ -48,16 +49,14 @@ int main(int argc, char** argv) {
 
              // Receive and parse data
              std::string buffer = client.tcpReceive();
-             PointList points = parsePointCloud(buffer.substr(buffer.find("DIST1")));
+             PointList* points = parsePointCloud(buffer.substr(buffer.find("DIST1")));
 
-             // Put number of points and points in shared memory 
-             uint8_t* baseAddr = (uint8_t*)((char*)map.getBaseAddress() + 0);
-             PointList* vecAddr = (PointList*)((char*)map.getBaseAddress() + 8);
-             *baseAddr = points.size();
-             *vecAddr = points;
+             // Put array of points in shared memory 
+             PointList* vecAddr = (PointList*)((char*)map.getBaseAddress());
+             *vecAddr = *points;
 
              // Print points
-             //printPoints(points);
+             printPoints(*points);
 
              // Set heartbeat
              *heartbeat = true;
@@ -72,7 +71,7 @@ int main(int argc, char** argv) {
     return EXIT_SUCCESS;
 }
 
-static PointList parsePointCloud(std::string data) {
+static PointList* parsePointCloud(std::string data) {
 
     // Tokenize data
     std::stringstream dataStream;
@@ -93,18 +92,18 @@ static PointList parsePointCloud(std::string data) {
     int numData = std::stoi(dataVector.at(5));
 
     // Parse data
-    PointList coords;
+    PointList* coords{};
     for (int i = 6; i < numData + 6; i++) {
         ULONG radius = std::stol(dataVector.at(i), nullptr, 16);
-        coords.push_back({ radius * cos(angle), radius * sin(angle) });
+        (*coords)[numData] = { radius * cos(angle), radius * sin(angle) };
         angle += stepWidth;
     }
-
+    
     return coords;
 }
 
 static void printPoints(PointList coords) {
-    for (const auto & coord : coords)
-        std::cout << "(" << coord.first << ", " << coord.second << ")" << std::endl;
+    for (const auto & [x, y] : coords)
+        std::cout << "(" << x << ", " << y << ")" << std::endl;
     std::cout << std::endl << std::endl;
 }
