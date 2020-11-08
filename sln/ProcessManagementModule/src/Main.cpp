@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
     processes.reserve(numModules);
     for (mod::ModuleInfo minfo : mod::STARTUP) {
 
-        if (minfo.name != mod::CAMERA.name)
+        if (minfo.name == mod::TELEOP.name)
             continue;
 
         Process process(minfo);  // create new process
@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
                 uint16_t* gps = (uint16_t*)((char*)process.second.getBaseAddress());
             }
 
-            // Skip display module
+            // Skip display module as it does not have a heartbeat
             if (process.first.minfo.name == mod::DISPLAY.name)
                 continue;
 
@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
                 if (process.first.minfo.name == mod::LASER.name ||
                     process.first.minfo.name == mod::CAMERA.name) {
                     std::wcout << process.first.minfo.name << " FAILED" << std::endl;
-                    //exit(EXIT_FAILURE);
+                    exit(EXIT_FAILURE);
                 } else {
                     std::wcout << process.first.minfo.name << " RESTARTING" << std::endl;
                     process.first.kill();
@@ -112,10 +112,6 @@ int main(int argc, char* argv[]) {
 
     return EXIT_SUCCESS;
 }
-
-/*std::wcout << std::setw(24) << std::right << process.first;
-            std::wcout << std::setw(6) << std::right << (process.first.isAlive() ? L"Alive" : L"Dead");
-            std::wcout << std::endl << std::endl;*/
 
 static void printHeartbeats(bool* heartbeats[]) {
     std::cout << "C D G L M T" << std::endl;
