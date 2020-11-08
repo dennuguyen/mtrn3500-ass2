@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
 static uint32_t getCRC32(const unsigned char* data, int n) {
     uint32_t crc32 = 0;
     while (n-- != 0) {
-        uint32_t temp = ((int)crc32 ^ *(data++)) & 0xFF;
+        uint32_t temp = (crc32 ^ *(data++)) & 0xFF;
 
         for (int j = 8; j > 0; j--) {
             if (temp & 1)
