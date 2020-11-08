@@ -1,6 +1,7 @@
 #ifndef MODULES_HPP_
 #define MODULES_HPP_
 
+#include <string>
 #include <vector>
 
 namespace mod {
