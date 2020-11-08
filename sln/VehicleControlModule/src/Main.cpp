@@ -14,7 +14,7 @@
 static std::tuple<double, double, bool> teleopInput();
 static double limit(double value, double min, double max);
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
     // Create file mapping object for this process
     sm::FileMappingObject map(mod::TELEOP.name, sm::SIZE);
     map.openFileMapping();

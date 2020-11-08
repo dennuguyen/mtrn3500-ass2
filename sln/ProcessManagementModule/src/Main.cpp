@@ -21,7 +21,7 @@ constexpr int numModules = 6;
 
 static void printHeartbeats(bool* heartbeats[]);
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
 
     // Create the job manager
     JobManager jm;
@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
     processes.reserve(numModules);
     for (mod::ModuleInfo minfo : mod::STARTUP) {
 
-        if (minfo.name != mod::GPS.name)
+        if (minfo.name != mod::CAMERA.name)
             continue;
 
         Process process(minfo);  // create new process

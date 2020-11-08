@@ -16,7 +16,7 @@ typedef std::array<std::pair<double, double>, 200>  PointList;
 static int parsePointCloud(std::string data, PointList* coords);
 static void printPoints(PointList coords);
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
 
     // Create file mapping object for this process
     sm::FileMappingObject map(mod::LASER.name, sm::SIZE);

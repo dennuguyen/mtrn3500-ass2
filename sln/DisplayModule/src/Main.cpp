@@ -65,7 +65,7 @@ double speed = 0;
 double steering = 0;
 
 //int _tmain(int argc, _TCHAR* argv[]) {
-int main(int argc, char ** argv) {
+int main(int argc, char* argv[]) {
 
 	const int WINDOW_WIDTH = 800;
 	const int WINDOW_HEIGHT = 600;
