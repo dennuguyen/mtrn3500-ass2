@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
             // Get CRC value
             uint32_t crc = *(uint32_t*)(buffer + headerLength + 80);
 
-            // Consider non-corrupt GPS data
+            // Validate GPS data
             if (getCRC32(buffer, 108) == crc) {
 
                 // Process GPS data and store in shared memory
