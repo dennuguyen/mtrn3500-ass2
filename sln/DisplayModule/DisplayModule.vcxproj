@@ -87,9 +87,11 @@
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Frustum.cpp" />
+    <ClCompile Include="src\GPS.cpp" />
     <ClCompile Include="src\Ground.cpp" />
     <ClCompile Include="src\HUD.cpp" />
     <ClCompile Include="src\KeyManager.cpp" />
+    <ClCompile Include="src\LIDAR.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Messages.cpp" />
     <ClCompile Include="src\MyVehicle.cpp" />
@@ -101,9 +103,11 @@
   <ItemGroup>
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\Frustum.hpp" />
+    <ClInclude Include="include\GPS.hpp" />
     <ClInclude Include="include\Ground.hpp" />
     <ClInclude Include="include\HUD.hpp" />
     <ClInclude Include="include\KeyManager.hpp" />
+    <ClInclude Include="include\LIDAR.hpp" />
     <ClInclude Include="include\Messages.hpp" />
     <ClInclude Include="include\MyVehicle.hpp" />
     <ClInclude Include="include\Quaternion.hpp" />

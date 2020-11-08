@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
@@ -26,20 +25,16 @@
 	#include <sys/time.h>
 #endif
 
-
 #include "Camera.hpp"
 #include "Ground.hpp"
 #include "KeyManager.hpp"
-
+#include "LIDAR.hpp"
+#include "GPS.hpp"
 #include "Shape.hpp"
 #include "Vehicle.hpp"
 #include "MyVehicle.hpp"
-
 #include "Messages.hpp"
 #include "HUD.hpp"
-
-#include "Modules.hpp"
-#include "SharedMemory.hpp"
 
 void display();
 void reshape(int width, int height);
@@ -54,7 +49,6 @@ void mouse(int button, int state, int x, int y);
 void dragged(int x, int y);
 void motion(int x, int y);
 
-using namespace std;
 using namespace scos;
 
 // Used to store the previous mouse location so we
@@ -63,39 +57,21 @@ int prev_mouse_x = -1;
 int prev_mouse_y = -1;
 
 // vehicle control related variables
-Vehicle * vehicle = NULL;
+Vehicle* vehicle = NULL;
 double speed = 0;
 double steering = 0;
 
-// Shared memory info
-
+// LIDAR & GPS
+LIDAR* lidar = nullptr;
+GPS* gps = nullptr;
 
 //int _tmain(int argc, _TCHAR* argv[]) {
 int main(int argc, char* argv[]) {
-
-	// Open shared memory to laser scan data
-	sm::FileMappingObject laser(mod::LASER.name, sm::SIZE);
-	laser.openFileMapping();
-	uint16_t* length = (uint16_t*)((char*)laser.getBaseAddress());
-	std::pair<double, double>* points = (std::pair<double, double>*)((char*)laser.getBaseAddress() + 16);
-
-	// Open shared memory to GPS data
-	sm::FileMappingObject gps(mod::GPS.name, sm::SIZE);
-	gps.openFileMapping();
-	double* northing = (double*)((char*)gps.getBaseAddress());
-	double* easting = (double*)((char*)gps.getBaseAddress() + 8);
-	double* height = (double*)((char*)gps.getBaseAddress() + 16);
-
-	std::cout << *length << std::endl;
-	std::cout << *northing << std::endl;
-	std::cout << *easting << std::endl;
-	std::cout << *height << std::endl;
-
-	// OpenGL
+	
 	const int WINDOW_WIDTH = 800;
 	const int WINDOW_HEIGHT = 600;
 
-	glutInit(&argc, (char**)(argv));
+	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -119,16 +95,22 @@ int main(int argc, char* argv[]) {
 	glutPassiveMotionFunc(motion);
 
 	vehicle = new MyVehicle();
+	lidar = new LIDAR();
+	gps = new GPS();
 
 	glutMainLoop();
 
-	if (vehicle != NULL) {
+	if (vehicle != NULL)
 		delete vehicle;
-	}
+
+	if (lidar != NULL)
+		delete lidar;
+
+	if (gps != NULL)
+		delete gps;
 
 	return 0;
 }
-
 
 void display() {
 	// -------------------------------------------------------------------------
@@ -158,17 +140,20 @@ void display() {
 
 	}
 
-
 	// draw HUD
 	HUD::Draw();
+
+	// draw lidar
+	LIDAR::draw();
+
+	// print gps
+
 
 	glutSwapBuffers();
 };
 
 void reshape(int width, int height) {
-
 	Camera::get()->setWindowDimensions(width, height);
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 };
@@ -237,9 +222,6 @@ void idle() {
 		speed = Vehicle::MAX_BACKWARD_SPEED_MPS;
 	}
 
-
-
-
 	const float sleep_time_between_frames_in_seconds = 0.025;
 
 	static double previousTime = getTime();
@@ -280,7 +262,6 @@ void keydown(unsigned char key, int x, int y) {
 		Camera::get()->togglePursuitMode();
 		break;
 	}
-
 };
 
 void keyup(unsigned char key, int x, int y) {
@@ -288,9 +269,7 @@ void keyup(unsigned char key, int x, int y) {
 };
 
 void special_keydown(int keycode, int x, int y) {
-
 	KeyManager::get()->specialKeyPressed(keycode);
-
 };
 
 void special_keyup(int keycode, int x, int y) {  
@@ -298,27 +277,19 @@ void special_keyup(int keycode, int x, int y) {
 };
 
 void mouse(int button, int state, int x, int y) {
-
 };
 
 void dragged(int x, int y) {
-
 	if (prev_mouse_x >= 0) {
-
 		int dx = x - prev_mouse_x;
 		int dy = y - prev_mouse_y;
-
 		Camera::get()->mouseRotateCamera(dx, dy);
 	}
-
 	prev_mouse_x = x;
 	prev_mouse_y = y;
 };
 
 void motion(int x, int y) {
-
 	prev_mouse_x = x;
 	prev_mouse_y = y;
 };
-
-
