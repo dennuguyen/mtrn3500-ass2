@@ -1079,7 +1079,8 @@ DLLEXPORT int DLLCALL tjDecompressHeader3(tjhandle handle,
  * @return a pointer to a list of fractional scaling factors, or NULL if an
  * error is encountered (see #tjGetErrorStr().)
 */
-DLLEXPORT tjscalingfactor* DLLCALL tjGetScalingFactors(int *numscalingfactors);
+
+tjscalingfactor* DLLCALL tjGetScalingFactors(int *numscalingfactors);
 
 
 /**
