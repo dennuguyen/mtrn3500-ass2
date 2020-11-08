@@ -66,22 +66,6 @@ int main(int argc, char* argv[]) {
             // Printing heartbeats
             printHeartbeats(heartbeats);
 
-            // Camera data
-            if (process.first.minfo.name == mod::CAMERA.name) {
-                uint16_t* gps = (uint16_t*)((char*)process.second.getBaseAddress());
-            }
-
-            // Laser scan data
-            if (process.first.minfo.name == mod::LASER.name) {
-                uint16_t* length = (uint16_t*)((char*)process.second.getBaseAddress());
-                std::pair<double, double>* points = (std::pair<double, double>*)((char*)process.second.getBaseAddress() + 16);
-            }
-
-            // GPS data
-            if (process.first.minfo.name == mod::GPS.name) {
-                uint16_t* gps = (uint16_t*)((char*)process.second.getBaseAddress());
-            }
-
             // Skip display module as it does not have a heartbeat
             if (process.first.minfo.name == mod::DISPLAY.name)
                 continue;

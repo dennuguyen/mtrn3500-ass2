@@ -38,6 +38,9 @@
 #include "Messages.hpp"
 #include "HUD.hpp"
 
+#include "Modules.hpp"
+#include "SharedMemory.hpp"
+
 void display();
 void reshape(int width, int height);
 void idle();
@@ -64,9 +67,31 @@ Vehicle * vehicle = NULL;
 double speed = 0;
 double steering = 0;
 
+// Shared memory info
+
+
 //int _tmain(int argc, _TCHAR* argv[]) {
 int main(int argc, char* argv[]) {
 
+	// Open shared memory to laser scan data
+	sm::FileMappingObject laser(mod::LASER.name, sm::SIZE);
+	laser.openFileMapping();
+	uint16_t* length = (uint16_t*)((char*)laser.getBaseAddress());
+	std::pair<double, double>* points = (std::pair<double, double>*)((char*)laser.getBaseAddress() + 16);
+
+	// Open shared memory to GPS data
+	sm::FileMappingObject gps(mod::GPS.name, sm::SIZE);
+	gps.openFileMapping();
+	double* northing = (double*)((char*)gps.getBaseAddress());
+	double* easting = (double*)((char*)gps.getBaseAddress() + 8);
+	double* height = (double*)((char*)gps.getBaseAddress() + 16);
+
+	std::cout << *length << std::endl;
+	std::cout << *northing << std::endl;
+	std::cout << *easting << std::endl;
+	std::cout << *height << std::endl;
+
+	// OpenGL
 	const int WINDOW_WIDTH = 800;
 	const int WINDOW_HEIGHT = 600;
 
@@ -93,13 +118,7 @@ int main(int argc, char* argv[]) {
 	glutMotionFunc(dragged);
 	glutPassiveMotionFunc(motion);
 
-	// -------------------------------------------------------------------------
-	// Please uncomment the following line of code and replace 'MyVehicle'
-	//   with the name of the class you want to show as the current 
-	//   custom vehicle.
-	// -------------------------------------------------------------------------
 	vehicle = new MyVehicle();
-
 
 	glutMainLoop();
 
