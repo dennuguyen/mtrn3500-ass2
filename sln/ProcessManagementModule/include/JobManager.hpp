@@ -1,5 +1,5 @@
 /**
- * Kills all processes when ProcessManagementModule process dies
+ * Kills all attached processes when host process dies
  */
 
 #include <iostream>
