@@ -1,41 +1,26 @@
 #include <Winsock2.h>
 
 #include <iostream>
-#include <thread>
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
+#include <GL/freeglut.h>
+#include <turbojpeg.h>
 #include <Windows.h>
 
 #include "Modules.hpp"
 #include "SharedMemory.hpp"
 #include "TCPClient.hpp"
 #include "Timer.hpp"
-#include "turbojpeg.h"
 
-static void glutThread();
+static GLuint texture;
+static tcp::TCPClient client(mod::CAMERA.ip, mod::CAMERA.port, mod::ZID);
+
 static void display();
 static void idle();
-
-GLuint tex;
-tcp::TCPClient client(mod::CAMERA.ip, mod::CAMERA.port, mod::ZID);
 
 int main(int argc, char* argv[]) {
 
     // Connect TCP client
     client.tcpConnect();
-
-    //GL Window setup
-    std::cout << "Creating window" << std::endl;
-    glutInit(&argc, (char**)(argv));
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
-    glutInitWindowPosition(0, 0);
-    glutInitWindowSize(800, 600);
-    glutCreateWindow("MTRN3500 - Camera");
-
-    // Create thread for glut
-    std::thread(glutThread);
 
     // Create file mapping object to process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
@@ -46,7 +31,20 @@ int main(int argc, char* argv[]) {
     tmr::Timer timer;
     timer.time(tmr::TIMEOUT_4S);
 
+    // Initialise GL window
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
+    glutCreateWindow("UGV Camera");
+
+    // Specify GL callbacks
+    glutDisplayFunc(display);
+    glutIdleFunc(idle);
+    glGenTextures(1, &texture);
+
     while (!timer.expired()) {
+
+        glutMainLoopEvent();
+
         if (*heartbeat == false) {
             *heartbeat = true;
             timer.time(tmr::TIMEOUT_4S);
@@ -60,17 +58,11 @@ int main(int argc, char* argv[]) {
     return EXIT_SUCCESS;
 }
 
-static void glutThread() {
-    glutMainLoop();
-}
-
 static void display() {
-    //Set camera as gl texture
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, tex);
+    glBindTexture(GL_TEXTURE_2D, texture);
 
-    //Map Camera to window
     glBegin(GL_QUADS);
     glTexCoord2f(0, 1);
     glVertex2f(-1, -1);
@@ -81,39 +73,29 @@ static void display() {
     glTexCoord2f(0, 0);
     glVertex2f(-1, 1);
     glEnd();
-    glutSwapBuffers();
 
-    if (glutGetWindow() == 0) {
-        std::cerr << "ERROR: Camera window is closed" << std::endl;
-        std::terminate();
-    }
+    glutSwapBuffers();
 }
 
 static void idle() {
-    /*
-    // Receive camera data
-    std::string update = client.tcpReceive();
-    long unsigned int _jpegSize = update.size();
-    std::cout << "received " << _jpegSize << " bytes of data\n";
-    unsigned char* _compressedImage = (unsigned char*)(update.data());
-    int jpegSubsamp = 0, width = 0, height = 0;
+    std::string buffer = client.tcpReceive();
+    std::cout << buffer.data() << std::endl;
 
-    // JPEG Decompression
-    tjhandle _jpegDecompressor = tjInitDecompress();
-    tjDecompressHeader2(_jpegDecompressor, _compressedImage, _jpegSize, &width, &height, &jpegSubsamp);
-    unsigned char* buffer = new unsigned char[width * height * 3];  //!< will contain the decompressed image
-    printf("Dimensions:  %d   %d\n", height, width);
-    tjDecompress2(_jpegDecompressor, _compressedImage, _jpegSize, buffer, width, 0, height, TJPF_RGB, TJFLAG_FASTDCT);
-    tjDestroy(_jpegDecompressor);
+    unsigned long numBytes = buffer.size();
+    unsigned char* compressed = (unsigned char*)buffer.data();
+    int jpegSubsample = 0, width = 0, height = 0;
 
-    // Load texture
-    glBindTexture(GL_TEXTURE_2D, tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, buffer);
-    delete[] buffer;
-    */
-    display();
+    tjhandle decompressor = tjInitDecompress();
+    //tjDecompressHeader2(decompressor, compressed, numBytes, &width, &height, &jpegSubsample);
+    //unsigned char* decompressed = new unsigned char[width * height * 3];
+    //tjDecompress2(decompressor, compressed, numBytes, decompressed, width, 0, height, TJPF_RGB, TJFLAG_FASTDCT);
+    //tjDestroy(decompressor);
+    //
+    //glBindTexture(GL_TEXTURE_2D, texture);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, decompressed);
+    //delete[] decompressed;
 }
