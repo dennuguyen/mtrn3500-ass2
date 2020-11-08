@@ -8,12 +8,13 @@
 
 #include <Windows.h>
 
+#include <iostream>
 #include <string>
 #include <vector>
 
 namespace sm {
 
-size_t SIZE = 1024;  // size of maps
+constexpr size_t SIZE = 1024;  // size of maps
 
 class FileMappingObject {
    public:
