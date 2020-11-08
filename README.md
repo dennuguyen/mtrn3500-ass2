@@ -17,12 +17,12 @@ Deliverables:
 
 ### Process Management Module
 
-* Set up shared memory, shared memory module must provide []
+* Set up shared memory, shared memory module must provide [x]
     * Read/write access to laser data [x]
     * Read/write access to GPS data [x]
-    * Read/write access to camera data []
-    * Read/write access to vehicle control data []
-    * Read/write access to process management data []
+    * Read/write access to camera data [x]
+    * Read/write access to vehicle control data [x]
+    * Read/write access to process management data [x]
 * Start all other processes in logical sequence suitable for teleop of UGV []
 * Monitor process heartbeats [x]
   * Shutdown event if failure of critical process [x]
@@ -35,26 +35,32 @@ Deliverables:
 * Write client to connect to UGV server (192.168.1.200:23000) [x]
 * Collect laser rangefinder data [x]
 * Process laser rangefinder data to get (X,Y) [x]
-* Store laser rangefinder data in array of (X,Y) in shared memory []
+* Store laser rangefinder data in array of (X,Y) in shared memory [x]
 * Detect laser process heartbeat and respond to shutdown commands from PM module [x]
 
 ### GNSS Module
 
 * Write client to connect to UGV server (192.168.1.200:24000) [x]
 * Get global position data in binary [x]
-* Process binary data to get (X,Y) in UTM coordinates and heigh in metres []
-* Store processed data in shared memory []
-* Print Northing, Easting, Height in metres and CRC value []
+* Process binary data to get (X,Y) in UTM coordinates and heigh in metres [x]
+* Store processed data in shared memory [x]
+* Print Northing, Easting, Height in metres and CRC value [x]
 
 ### Camera Module
 
-* Write client to connect to UGV server (192.168.1.200:26000) []
+* Write client to connect to UGV server (192.168.1.200:26000) [x]
 * Get most recent camera image frame []
 * Display camera image on screen []
 
 ### Vehicle Control Module
 
+* Write client to connect to UGV server (192.168.1.200:25000) [x]
+* Send ASCII messages to teleop the UGV []
+
 ### Display Module
+
+* Plot laser scan data []
+* Plot GNSS data []
 
 ## Assessment
 1. Complete above
