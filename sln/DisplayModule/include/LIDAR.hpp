@@ -3,10 +3,15 @@
 
 #include "SharedMemory.hpp"
 
+constexpr double HEIGHT = 0.6;
+
 class LIDAR {
    public:
 	LIDAR();
-	static void draw();
+	void draw(double x, double y);
+
+   private:
+	void update();
 
    private:
 	sm::FileMappingObject laser;

@@ -57,13 +57,9 @@ int prev_mouse_x = -1;
 int prev_mouse_y = -1;
 
 // vehicle control related variables
-Vehicle* vehicle = NULL;
+Vehicle* vehicle = nullptr;
 double speed = 0;
 double steering = 0;
-
-// LIDAR & GPS
-LIDAR* lidar = nullptr;
-GPS* gps = nullptr;
 
 //int _tmain(int argc, _TCHAR* argv[]) {
 int main(int argc, char* argv[]) {
@@ -95,19 +91,11 @@ int main(int argc, char* argv[]) {
 	glutPassiveMotionFunc(motion);
 
 	vehicle = new MyVehicle();
-	lidar = new LIDAR();
-	gps = new GPS();
 
 	glutMainLoop();
 
-	if (vehicle != NULL)
+	if (vehicle != nullptr)
 		delete vehicle;
-
-	if (lidar != NULL)
-		delete lidar;
-
-	if (gps != NULL)
-		delete gps;
 
 	return 0;
 }
@@ -137,17 +125,10 @@ void display() {
 	// draw my vehicle
 	if (vehicle != NULL) {
 		vehicle->draw();
-
 	}
 
 	// draw HUD
 	HUD::Draw();
-
-	// draw lidar
-	LIDAR::draw();
-
-	// print gps
-
 
 	glutSwapBuffers();
 };

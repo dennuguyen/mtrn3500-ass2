@@ -3,9 +3,10 @@
 #define MTRN3500_VEHICLE_H
 
 #include <iostream>
+#include <vector>
+
 #include "Shape.hpp"
 #include "VectorMaths.hpp"
-#include <vector>
 
 class Vehicle : public Shape {
 public:
@@ -30,7 +31,6 @@ public:
 protected:
 	double speed;     // m/s
 	double steering;  // degrees
-
 };
 
 double clamp(double a, double n, double b);

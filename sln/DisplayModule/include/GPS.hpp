@@ -6,7 +6,10 @@
 class GPS {
    public:
 	GPS();
-	static void draw();
+	void draw();
+
+   private:
+	void update();
 
    private:
 	sm::FileMappingObject gps;

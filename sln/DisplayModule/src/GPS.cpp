@@ -13,15 +13,19 @@
 GPS::GPS() : gps(mod::GPS.name, sm::SIZE) {
     gps.openFileMapping();
     gps.mappedViewAddr();
-    northing = (double*)((char*)gps.getBaseAddress());
-    easting = (double*)((char*)gps.getBaseAddress() + 8);
-    height = (double*)((char*)gps.getBaseAddress() + 16);
+    update();
 }
 
 void GPS::draw() {
-    
+    update();
     glBegin(GL_LINES);
         glVertex3f(0, 0, 0);
         glVertex3f(1, 0, 0);
     glEnd();
 };
+
+void GPS::update() {
+    northing = (double*)((char*)gps.getBaseAddress());
+    easting = (double*)((char*)gps.getBaseAddress() + 8);
+    height = (double*)((char*)gps.getBaseAddress() + 16);
+}
