@@ -36,10 +36,12 @@ int main(int argc, char* argv[]) {
     client.tcpConnect();
 
     // Create a circular buffer queue for OEM4 values
-    const int maxQueue = 20;
-    int* head = (int*)map.getBaseAddress();
-    int* tail = (int*)((char*)map.getBaseAddress() + 8);
-    OEM4 (*oem4Queue)[maxQueue] = (OEM4(*)[maxQueue])((char*)map.getBaseAddress() + 16);
+    const uint8_t maxQueue = 20;
+    uint8_t* maxQueuePtr = (uint8_t*)map.getBaseAddress();
+    *maxQueuePtr = maxQueue;
+    int* head = (int*)map.getBaseAddress() + 8;
+    int* tail = (int*)map.getBaseAddress() + 16;
+    OEM4 (*oem4Queue)[maxQueue] = (OEM4(*)[maxQueue])((char*)map.getBaseAddress() + 24);
 
     // Create timer
     tmr::Timer timer;
