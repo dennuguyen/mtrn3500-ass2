@@ -90,17 +90,17 @@ static int parsePointCloud(std::string data, PointList* coords) {
 
     // Get info
     double scalingFactor = std::stod(dataVector.at(1));
-    double scalingOffset = std::stod(dataVector.at(2));         // always zero
-    double startAngle = std::stoi(dataVector.at(3));  // subtract 90 to correct reference frame orientation
-    double stepWidth = std::stoi(dataVector.at(4)) / 10000.0;
+    double scalingOffset = std::stod(dataVector.at(2));  // always zero
+    double startAngle = (std::stoi(dataVector.at(3)) / 10000.0 - 90) * 3.1415 / 180;
+    double stepWidth = std::stoi(dataVector.at(4)) / 10000.0 * 3.1415 / 180;
     int numData = std::stoi(dataVector.at(5));
 
     // Parse data
+    double angle = stepWidth;
     for (unsigned int i = 6; i < numData + 6; i++) {
         ULONG radius = std::stol(dataVector.at(i), nullptr, 16);
-        double angle = (i - 6) * stepWidth * 3.1415 / 180;
         (*coords)[i] = { radius * cos(angle), radius * sin(angle) };
-        // angle += stepWidth;
+        angle += stepWidth;
     }
 
     return numData;
