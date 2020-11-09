@@ -142,7 +142,7 @@ void MyVehicle::draw()
 	positionInGL();
 	
 	drawUGV(steering);
-	oem4.draw(getX(), getY());
+	oem4.draw();
 
 	glPopMatrix();
 }
