@@ -1,6 +1,8 @@
 #ifndef CIRCULAR_QUEUE_HPP_
 #define CIRCULAR_QUEUE_HPP_
 
+#include <vector>
+
 namespace cq {
 
 	bool isEmpty(int head, int tail) {
@@ -12,7 +14,7 @@ namespace cq {
 	}
 
 	template<class T, size_t N>
-	bool dequeue(T(&&t)[N], int&& head, int&& tail) {
+	bool dequeue(T(&&t)[N], int& head, int& tail) {
 		if (isEmpty(head, tail))
 			return false;
 		tail = (tail + 1) % N;
@@ -20,7 +22,7 @@ namespace cq {
 	}
 
 	template<class T, size_t N>
-	bool enqueue(T(&&t)[N], T item, int&& head, int&& tail) {
+	bool enqueue(T(&&t)[N], T item, int& head, int& tail) {
 		if (isFull(head, tail, N))
 			return false; // dequeue(t, head, tail);
 		if (head == -1)
@@ -31,11 +33,11 @@ namespace cq {
 	}
 
 	template<class T, size_t N>
-	void print(T(&&t)[N], int&& head, int&& tail) {
-		std::cout << "(";
+	std::vector<T> tokenise(T(&&t)[N], int& head, int& tail) {
+		std::vector<T> v;
 		for (int i = tail, j = 0; j < N; i++, j++)
-			std::cout << t[i % N] << ", ";
-		std::cout << ")";
+			v.push_back(t[i % N]);
+		return v;
 	}
 
 }  // namespace cq

@@ -9,16 +9,15 @@
 #include "TCPClient.hpp"  // #include <Winsock2.h>
 #include "Timer.hpp"
 
-#pragma pack(push, 1)
 struct OEM4 {
     double northing;
     double easting;
     double height;
+    uint32_t crc;
 };
-#pragma pack(pop)
 
 static uint32_t getCRC32(const unsigned char* data, int n);
-static void printGPSData(OEM4 oem4, uint32_t crc);
+static void printGPSData(std::vector<OEM4> data);
 
 int main(int argc, char* argv[]) {
 
@@ -36,10 +35,11 @@ int main(int argc, char* argv[]) {
     tcp::TCPClient client(mod::GPS.ip, mod::GPS.port, mod::ZID);
     client.tcpConnect();
 
-    // Create a circular buffer queue of OEM4 struct
-    uint8_t* head = (uint8_t*)map.getBaseAddress();
-    uint8_t* tail = (uint8_t*)((char*)map.getBaseAddress() + 8);
-    OEM4 (*queue)[20] = (OEM4(*)[20])((char*)map.getBaseAddress() + 16);
+    // Create a circular buffer queue for OEM4 values
+    const int maxQueue = 20;
+    int* head = (int*)map.getBaseAddress();
+    int* tail = (int*)((char*)map.getBaseAddress() + 8);
+    OEM4 (*oem4Queue)[maxQueue] = (OEM4(*)[maxQueue])((char*)map.getBaseAddress() + 16);
 
     // Create timer
     tmr::Timer timer;
@@ -63,17 +63,19 @@ int main(int argc, char* argv[]) {
 
                 // Get GPS data
                 OEM4 oem4 = *(OEM4*)(buffer + headerLength + 16);
+                oem4.crc = crc;
 
                 // Process GPS data and store in shared memory
-                if (cq::isFull(*head, *tail, 20) == true)
-                    cq::dequeue(*queue, (int)*head, (int)*tail);
+                if (cq::isFull(*head, *tail, 20) == true) {
+                    cq::dequeue(*oem4Queue, *head, *tail);
+                }
                 
-                if (cq::enqueue(*queue, oem4, (int)*head, (int)*tail) == false) {
+                if (cq::enqueue(*oem4Queue, oem4, *head, *tail) == false) {
                     std::cerr << "ERROR: Could not enqueue OEM4 data" << std::endl;
                 }
 
                 // Print GPS data
-                //printGPSData(queue, crc);
+                printGPSData(cq::tokenise(*oem4Queue, *head, *tail));
             }
 
             // Set heartbeat
@@ -111,7 +113,10 @@ static uint32_t getCRC32(const unsigned char* data, int n) {
 /**
  * Print GPS data which includes Northing, Easting, Height and CRC
  */
-static void printGPSData(OEM4 oem4, uint32_t crc) {
-    std::cout << "(N: " << oem4.northing << ", E: " << oem4.easting << ", H: " << oem4.height << ")";
-    std::cout << " + " << crc << std::endl;
+static void printGPSData(std::vector<OEM4> data) {
+    for (OEM4 d : data) {
+        std::cout << "(N: " << d.northing << ", E: " << d.easting << ", H: " << d.height << ")";
+        std::cout << " + " << d.crc << std::endl;
+    }
+    std::cout << std::endl;
 }
