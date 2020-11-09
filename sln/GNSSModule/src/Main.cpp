@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "CircularQueue.hpp"
 #include "Modules.hpp"
 #include "SharedMemory.hpp"
 #include "TCPClient.hpp"  // #include <Winsock2.h>
@@ -20,6 +21,7 @@ static uint32_t getCRC32(const unsigned char* data, int n);
 static void printGPSData(OEM4 oem4, uint32_t crc);
 
 int main(int argc, char* argv[]) {
+
     // Create file mapping object for this process
     sm::FileMappingObject map(mod::GPS.name, sm::SIZE);
     map.openFileMapping();
@@ -33,6 +35,11 @@ int main(int argc, char* argv[]) {
     // Create TCP client
     tcp::TCPClient client(mod::GPS.ip, mod::GPS.port, mod::ZID);
     client.tcpConnect();
+
+    // Create a circular buffer queue of OEM4 struct
+    uint8_t* head = (uint8_t*)map.getBaseAddress();
+    uint8_t* tail = (uint8_t*)((char*)map.getBaseAddress() + 8);
+    OEM4 (*queue)[20] = (OEM4(*)[20])((char*)map.getBaseAddress() + 16);
 
     // Create timer
     tmr::Timer timer;
@@ -54,12 +61,19 @@ int main(int argc, char* argv[]) {
             // Validate GPS data
             if (getCRC32(buffer, 108) == crc) {
 
+                // Get GPS data
+                OEM4 oem4 = *(OEM4*)(buffer + headerLength + 16);
+
                 // Process GPS data and store in shared memory
-                OEM4* oem4 = ((OEM4*)map.getBaseAddress());
-                *oem4 = *(OEM4*)(buffer + headerLength + 16);
+                if (cq::isFull(*head, *tail, 20) == true)
+                    cq::dequeue(*queue, (int)*head, (int)*tail);
+                
+                if (cq::enqueue(*queue, oem4, (int)*head, (int)*tail) == false) {
+                    std::cerr << "ERROR: Could not enqueue OEM4 data" << std::endl;
+                }
 
                 // Print GPS data
-                printGPSData(*oem4, crc);
+                //printGPSData(queue, crc);
             }
 
             // Set heartbeat
@@ -71,7 +85,7 @@ int main(int argc, char* argv[]) {
     }
 
     client.tcpClose();
-
+    
     return EXIT_SUCCESS;
 }
 
