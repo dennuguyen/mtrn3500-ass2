@@ -45,22 +45,24 @@ Deliverables:
 * Process binary data to get (X,Y) in UTM coordinates and heigh in metres [x]
 * Store processed data in shared memory [x]
 * Print Northing, Easting, Height in metres and CRC value [x]
+* Stored data needs to be include old data []
 
 ### Camera Module
 
 * Write client to connect to UGV server (192.168.1.200:26000) [x]
-* Get most recent camera image frame []
-* Display camera image on screen []
+* Get most recent camera image frame [x]
+* Display camera image on screen [x]
 
 ### Vehicle Control Module
 
 * Write client to connect to UGV server (192.168.1.200:25000) [x]
 * Send ASCII messages to teleop the UGV []
+* Get key commands from display module and send as message for teleop []
 
 ### Display Module
 
-* Plot laser scan data []
-* Plot GNSS data []
+* Plot laser scan data [x]
+* Plot GNSS data as a line []
 
 ## Assessment
 1. Complete above
