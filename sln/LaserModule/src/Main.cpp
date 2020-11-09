@@ -51,9 +51,9 @@ int main(int argc, char* argv[]) {
             std::string buffer = client.tcpReceive();
 
             // Process and store laser scan data in shared memory
-            uint16_t* length = (uint16_t*)((char*)map.getBaseAddress());
+            uint16_t* numPoints = (uint16_t*)((char*)map.getBaseAddress());
             PointList* points = (PointList*)((char*)map.getBaseAddress() + 16);
-            *length = parsePointCloud(buffer, points);
+            *numPoints = parsePointCloud(buffer, points);
 
             // Print points
             printPoints(*points);
