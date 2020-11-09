@@ -17,8 +17,8 @@ LIDAR::LIDAR() : laser(mod::LASER.name, sm::SIZE) {
 }
 
 void LIDAR::update() {
-    numPoints = (uint16_t*)((char*)laser.getBaseAddress());
-    points = (std::pair<double, double>*)((char*)laser.getBaseAddress() + 16);
+    numPoints = (uint8_t*)((char*)laser.getBaseAddress());
+    points = (std::pair<double, double>*)((char*)laser.getBaseAddress() + 8);
 }
 
 void LIDAR::draw() {

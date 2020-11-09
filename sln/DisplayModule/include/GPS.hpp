@@ -13,9 +13,10 @@ class GPS {
 
    private:
 	sm::FileMappingObject gps;
-	double* northing;
-	double* easting;
-	double* height;
+	uint8_t* numPoints;
+	int* head;
+	int* tail;
+	double* data;
 };
 
 #endif  // MTRN3500_GPS_HPP_
