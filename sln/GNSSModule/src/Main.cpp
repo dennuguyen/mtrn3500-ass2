@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
 
                 // Get GPS data
                 OEM4 oem4 = *(OEM4*)(buffer + headerLength + 16);
-                oem4.crc = crc;
+                oem4.crc = crc;  // overwrite crc value
 
                 // Process GPS data and store in shared memory
                 if (cq::isFull(*head, *tail, 20) == true) {
