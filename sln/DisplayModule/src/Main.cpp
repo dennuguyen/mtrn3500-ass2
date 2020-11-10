@@ -61,6 +61,8 @@ Vehicle* vehicle = nullptr;
 double speed = 0;
 double steering = 0;
 
+GPS lms151;
+
 //int _tmain(int argc, _TCHAR* argv[]) {
 int main(int argc, char* argv[]) {
 	

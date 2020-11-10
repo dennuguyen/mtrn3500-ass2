@@ -5,16 +5,10 @@
 
 #include "CircularQueue.hpp"
 #include "Modules.hpp"
+#include "OEM4.hpp"
 #include "SharedMemory.hpp"
 #include "TCPClient.hpp"  // #include <Winsock2.h>
 #include "Timer.hpp"
-
-struct OEM4 {
-    double northing;
-    double easting;
-    double height;
-    uint32_t crc;
-};
 
 static uint32_t getCRC32(const unsigned char* data, int n);
 static void printGPSData(std::vector<OEM4> data);
@@ -36,7 +30,7 @@ int main(int argc, char* argv[]) {
     client.tcpConnect();
 
     // Create a circular buffer queue for OEM4 values
-    const uint8_t maxQueue = 20;
+    const uint8_t maxQueue = 4;
     uint8_t* maxQueuePtr = (uint8_t*)map.getBaseAddress();
     *maxQueuePtr = maxQueue;
     int* head = (int*)map.getBaseAddress() + 8;
@@ -49,10 +43,7 @@ int main(int argc, char* argv[]) {
 
     while (!timer.expired()) {
         if (*heartbeat == false) {
-
-            // Wait for no reason
-            Sleep(500);
-
+        
             // Receive GPS data
             unsigned char* buffer = (unsigned char*)(client.tcpReceive());
             unsigned char headerLength = *(buffer + 3);
@@ -85,7 +76,7 @@ int main(int argc, char* argv[]) {
             timer.time(tmr::TIMEOUT_4S);
         }
 
-        Sleep(500);  // 500 ms refresh rate
+        Sleep(3000);  // 3000 ms refresh rate
     }
 
     client.tcpClose();

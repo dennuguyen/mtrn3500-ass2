@@ -24,7 +24,7 @@ void LIDAR::update() {
 void LIDAR::draw() {
     update();
     glBegin(GL_LINES);
-        for (int i = 0; i < (*numPoints); i++) {
+        for (int i = 0; i < *numPoints; i++) {
             glVertex3f(0, HEIGHT, 0);
             glVertex3f(points[i].second / 1000, HEIGHT, points[i].first / 1000);
         }

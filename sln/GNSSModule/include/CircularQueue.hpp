@@ -33,7 +33,7 @@ namespace cq {
 	}
 
 	template<class T, size_t N>
-	std::vector<T> tokenise(T(&&t)[N], int& head, int& tail) {
+	std::vector<T> tokenise(T(&&t)[N], int head, int tail) {
 		std::vector<T> v;
 		for (int i = tail, j = 0; j < N; i++, j++)
 			v.push_back(t[i % N]);
