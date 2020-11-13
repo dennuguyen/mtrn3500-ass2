@@ -13,7 +13,7 @@
 GPS::GPS() : gps(mod::GPS.name, sm::SIZE) {
     gps.openFileMapping();
     gps.mappedViewAddr();
-    //update();
+    update();
 }
 
 void GPS::update() {
@@ -25,16 +25,16 @@ void GPS::update() {
 
 void GPS::draw(double x, double y) {
 
-    //update();
+    update();
 
     //glTranslated(0, 0, 0);
-    //glBegin(GL_LINES);
-        //glColor3f(0.0, 1.0, 0.0);
-        ////glVertex3f(0, 0, 0);
-        //for (int i = *tail, j = 0; j < *numPoints; i++, j++) {
-        //    glVertex3f(data[i % *numPoints].easting / 10 - y,
-        //               data[i % *numPoints].height / 1000,
-        //               data[i % *numPoints].northing / 10 - x);
-        //}
-    //glEnd();
+    glBegin(GL_LINES);
+        glColor3f(0.0, 1.0, 0.0);
+        glVertex3f(0, 0, 0);
+        for (int i = *tail, j = 0; j < *numPoints; i++, j++) {
+            glVertex3f(data[i % *numPoints].easting / 10 - y,
+                       data[i % *numPoints].height / 1000,
+                       data[i % *numPoints].northing / 10 - x);
+        }
+    glEnd();
 };
