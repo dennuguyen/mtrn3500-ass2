@@ -3,8 +3,6 @@
 
 #include "SharedMemory.hpp"
 
-constexpr double HEIGHT = 1;
-
 class LIDAR {
    public:
 	LIDAR();
