@@ -32,9 +32,9 @@ void GPS::draw(double x, double y) {
         glColor3f(0.0, 1.0, 0.0);
         glVertex3f(0, 0, 0);
         for (int i = *tail, j = 0; j < *numPoints; i++, j++) {
-            glVertex3f(data[i % *numPoints].easting / 10 - y,
+            glVertex3f(data[i % *numPoints].easting / 10,
                        data[i % *numPoints].height / 1000,
-                       data[i % *numPoints].northing / 10 - x);
+                       data[i % *numPoints].northing / 10);
         }
     glEnd();
 };
