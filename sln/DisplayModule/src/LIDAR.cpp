@@ -30,6 +30,7 @@ void LIDAR::update() {
 
 void LIDAR::draw() {
     update();
+    glTranslatef(0.5, 0, 0);
     glBegin(GL_LINES);
         for (int i = 0; i < *numPoints; i++) {
             if (d_cmp(points[i].second, 0.0, eps) == false && d_cmp(points[i].first, 0.0, eps) == false) {
