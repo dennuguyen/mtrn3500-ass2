@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
             timer.time(tmr::TIMEOUT_2S);
         }
 
-        Sleep(1000);  // 1000 ms refresh rate
+        Sleep(200);  // 200 ms refresh rate
     }
 
     client.tcpClose();
