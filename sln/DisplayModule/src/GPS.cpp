@@ -26,12 +26,8 @@ void GPS::update() {
 void GPS::draw(double x, double y) {
 
     update();
-    //glTranslated(-data[*tail % *numPoints].easting / 10 - y,
-    //             -data[*tail % *numPoints].height / 1000,
-    //             -data[*tail % *numPoints].northing / 10 - x);
     glBegin(GL_LINES);
         glColor3f(0.0, 1.0, 0.0);
-        glVertex3f(0, 0, 0);
         for (int i = *tail, j = 0; j < *numPoints; i++, j++) {
             glVertex3f(data[i % *numPoints].easting / 10,
                        data[i % *numPoints].height / 1000,
