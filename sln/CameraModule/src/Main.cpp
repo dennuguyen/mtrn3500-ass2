@@ -117,6 +117,6 @@ static void idle() {
 
     if (*heartbeat == false) {
         *heartbeat = true;
-        timer.time(tmr::TIMEOUT_4S);
+        timer.time(tmr::TIMEOUT_2S);
     }
 }

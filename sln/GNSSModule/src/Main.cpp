@@ -73,10 +73,10 @@ int main(int argc, char* argv[]) {
 
             // Set heartbeat
             *heartbeat = true;
-            timer.time(tmr::TIMEOUT_4S);
+            timer.time(tmr::TIMEOUT_2S);
         }
 
-        Sleep(3000);  // 3000 ms refresh rate
+        Sleep(1000);  // 1000 ms refresh rate
     }
 
     client.tcpClose();

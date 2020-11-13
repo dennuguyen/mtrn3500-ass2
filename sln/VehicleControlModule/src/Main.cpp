@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
             */
             // Set heartbeat
             *heartbeat = true;
-            timer.time(tmr::TIMEOUT_4S);
+            timer.time(tmr::TIMEOUT_2S);
         }
 
         Sleep(100);  // 100 ms refresh rate
