@@ -3,7 +3,7 @@
 
 #include "SharedMemory.hpp"
 
-constexpr double HEIGHT = 0;
+constexpr double HEIGHT = 1;
 
 class LIDAR {
    public:
@@ -15,7 +15,7 @@ class LIDAR {
 
    private:
 	sm::FileMappingObject laser;
-	uint8_t* numPoints;
+	uint16_t* numPoints;
 	std::pair<double, double>* points;
 };
 

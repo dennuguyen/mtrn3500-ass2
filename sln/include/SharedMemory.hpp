@@ -14,7 +14,7 @@
 
 namespace sm {
 
-constexpr size_t SIZE = 1024;  // size of maps
+constexpr size_t SIZE = 8600;  // size of maps
 
 class FileMappingObject {
    public:
