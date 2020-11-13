@@ -24,7 +24,6 @@ void GPS::update() {
 }
 
 void GPS::draw(double x, double y) {
-
     update();
     glBegin(GL_LINES);
         glColor3f(0.0, 1.0, 0.0);
