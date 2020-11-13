@@ -30,12 +30,16 @@ int main(int argc, char* argv[]) {
     client.tcpConnect();
 
     // Create a circular buffer queue for OEM4 values
-    const uint8_t maxQueue = 4;
-    uint8_t* maxQueuePtr = (uint8_t*)map.getBaseAddress();
-    *maxQueuePtr = maxQueue;
-    int* head = (int*)map.getBaseAddress() + 8;
-    int* tail = (int*)map.getBaseAddress() + 16;
-    OEM4 (*oem4Queue)[maxQueue] = (OEM4(*)[maxQueue])((char*)map.getBaseAddress() + 24);
+    const uint8_t N = 30;
+    uint8_t* maxQueue = (uint8_t*)map.getBaseAddress();
+    *maxQueue = N;
+    int8_t* head = (int8_t*)((char*)map.getBaseAddress() + 8);
+    int8_t* tail = (int8_t*)((char*)map.getBaseAddress() + 16);
+    OEM4 (*oem4Queue)[N] = (OEM4(*)[N])((char*)map.getBaseAddress() + 24);
+
+    // Initialise values
+    *head = *tail = -1;
+    **oem4Queue = {};
 
     // Create timer
     tmr::Timer timer;
@@ -59,11 +63,11 @@ int main(int argc, char* argv[]) {
                 oem4.crc = crc;  // overwrite crc value
 
                 // Process GPS data and store in shared memory
-                if (cq::isFull(*head, *tail, 20) == true) {
-                    cq::dequeue(*oem4Queue, *head, *tail);
+                if (cq::isFull(*head, *tail, N) == true) {
+                    cq::dequeue(*oem4Queue, (int&)*head, (int&)*tail);
                 }
-                
-                if (cq::enqueue(*oem4Queue, oem4, *head, *tail) == false) {
+
+                if (cq::enqueue(*oem4Queue, oem4, (int&)*head, (int&)*tail) == false) {
                     std::cerr << "ERROR: Could not enqueue OEM4 data" << std::endl;
                 }
 

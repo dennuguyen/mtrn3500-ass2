@@ -15,8 +15,8 @@ class GPS {
    private:
 	sm::FileMappingObject gps;
 	uint8_t* numPoints;
-	int* head;
-	int* tail;
+	int8_t* head;
+	int8_t* tail;
 	OEM4* data;
 };
 

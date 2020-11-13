@@ -54,10 +54,9 @@ int main(int argc, char* argv[]) {
             uint16_t* numPoints = (uint16_t*)((char*)map.getBaseAddress());
             PointList* points = (PointList*)((char*)map.getBaseAddress() + 16);
             *numPoints = parsePointCloud(buffer, points);
-            std::cout << (unsigned)*numPoints << " ";
 
             // Print points
-            //printPoints(*points);
+            printPoints(*points);
             
             // Set heartbeat
             *heartbeat = true;

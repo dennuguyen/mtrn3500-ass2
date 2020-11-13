@@ -35,6 +35,9 @@
 #include "MyVehicle.hpp"
 #include "Messages.hpp"
 #include "HUD.hpp"
+#include "Timer.hpp"
+#include "Modules.hpp"
+#include <GL\freeglut_ext.h>
 
 void display();
 void reshape(int width, int height);
@@ -49,6 +52,9 @@ void mouse(int button, int state, int x, int y);
 void dragged(int x, int y);
 void motion(int x, int y);
 
+tmr::Timer timer;
+static bool* heartbeat;
+
 using namespace scos;
 
 // Used to store the previous mouse location so we
@@ -60,8 +66,6 @@ int prev_mouse_y = -1;
 Vehicle* vehicle = nullptr;
 double speed = 0;
 double steering = 0;
-
-GPS lms151;
 
 //int _tmain(int argc, _TCHAR* argv[]) {
 int main(int argc, char* argv[]) {
@@ -93,6 +97,14 @@ int main(int argc, char* argv[]) {
 	glutPassiveMotionFunc(motion);
 
 	vehicle = new MyVehicle();
+
+	// Create file mapping object to process management
+	sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
+	management.openFileMapping();
+	heartbeat = (bool*)((char*)management.mappedViewAddr() + mod::DISPLAY.heartbeat);
+
+	// Start timer
+	timer.time(tmr::TIMEOUT_4S);
 
 	glutMainLoop();
 
@@ -218,6 +230,15 @@ void idle() {
 	}
 
 	display();
+
+	if (timer.expired()) {
+		glutLeaveMainLoop();
+	}
+
+	if (*heartbeat == false) {
+		*heartbeat = true;
+		timer.time(tmr::TIMEOUT_2S);
+	}
 
 #ifdef _WIN32 
 	Sleep(sleep_time_between_frames_in_seconds * 1000);

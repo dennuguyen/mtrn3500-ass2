@@ -24,7 +24,7 @@ static void printHeartbeats(bool* heartbeats[]);
 int main(int argc, char* argv[]) {
 
     // Create the job manager
-    JobManager jm;
+    //JobManager jm;
 
     // Set up process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
@@ -47,8 +47,8 @@ int main(int argc, char* argv[]) {
         Process process(minfo);  // create new process
 
         // Only add display module to job manager
-        if (process.minfo.name == mod::DISPLAY.name)
-            jm.attachProcess(process);
+        //if (process.minfo.name == mod::DISPLAY.name)
+        //    jm.attachProcess(process);
 
         sm::FileMappingObject map(minfo.name, sm::SIZE);  // create file mapping object for new process
         map.createFileMapping();                          // create file mapping object handle
@@ -65,10 +65,6 @@ int main(int argc, char* argv[]) {
 
             // Printing heartbeats
             printHeartbeats(heartbeats);
-
-            // Skip display module as it does not have a heartbeat
-            if (process.first.minfo.name == mod::DISPLAY.name)
-                continue;
 
             // Reset heartbeat
             if ((*heartbeats)[process.first.minfo.heartbeat] == true) {
