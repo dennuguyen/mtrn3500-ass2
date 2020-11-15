@@ -1,5 +1,6 @@
 #include "LIDAR.hpp"
 #include "Modules.hpp"
+#include "Util.hpp"
 
 #ifdef __APPLE__
     #include <OpenGL/gl.h>
@@ -9,13 +10,6 @@
 #else
     #include <GL/gl.h>
 #endif
-
-constexpr double eps = 1e12 * std::numeric_limits<double>::epsilon();
-
-static bool d_cmp(double a, double b, double eps) {
-    return std::abs(a - b) <= eps ||
-        std::abs(a - b) < (std::fmax(std::abs(a), std::abs(b)) * eps);
-}
 
 LIDAR::LIDAR() : laser(mod::LASER.name, sm::SIZE) {
     laser.openFileMapping();

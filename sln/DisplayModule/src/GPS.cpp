@@ -1,5 +1,6 @@
 #include "GPS.hpp"
 #include "Modules.hpp"
+#include "Util.hpp"
 
 #ifdef __APPLE__
     #include <OpenGL/gl.h>
@@ -28,7 +29,7 @@ void GPS::draw(double x, double y) {
     glBegin(GL_LINES);
         glColor3f(0.0, 1.0, 0.0);
         for (int i = *tail, j = 0; j < *numPoints; i++, j++) {
-            if (d_cmp(points[i].second, 0.0, eps) == false && d_cmp(points[i].first, 0.0, eps) == false) {
+            if (d_cmp(data[i % *numPoints].easting, x, eps) == false && d_cmp(data[i % *numPoints].northing, y, eps) == false) {
                 glVertex3f(data[i % *numPoints].easting / 10 + x,
                     data[i % *numPoints].height / 1000,
                     data[i % *numPoints].northing / 10 + y);
