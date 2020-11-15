@@ -11,29 +11,28 @@
     #include <GL/gl.h>
 #endif
 
-GPS::GPS() : gps(mod::GPS.name, sm::SIZE) {
+GPS::GPS() : gps(mod::GPS.name, sm::SIZE), numPoints(30), head(-1), tail(-1), data() {
     gps.openFileMapping();
     gps.mappedViewAddr();
     update();
+    timer.time(tmr::TIMEOUT_1S); // update draw every 1 second
 }
 
 void GPS::update() {
-    numPoints = (uint8_t*)gps.getBaseAddress();
-    head = (int8_t*)((char*)gps.getBaseAddress() + 8);
-    tail = (int8_t*)((char*)gps.getBaseAddress() + 16);
-    data = (OEM4*)((char*)gps.getBaseAddress() + 24);
+    if (timer.expired()) {
+        data.push_back(*(OEM4*)((char*)gps.getBaseAddress()));
+        timer.time(tmr::TIMEOUT_1S);
+    }
 }
 
 void GPS::draw(double x, double y) {
     update();
     glBegin(GL_LINES);
-        glColor3f(0.0, 1.0, 0.0);
-        for (int i = *tail, j = 0; j < *numPoints; i++, j++) {
-            if (d_cmp(data[i % *numPoints].easting, x, eps) == false && d_cmp(data[i % *numPoints].northing, y, eps) == false) {
-                glVertex3f(data[i % *numPoints].easting / 10 + x,
-                    data[i % *numPoints].height / 1000,
-                    data[i % *numPoints].northing / 10 + y);
-            }
-        }
+    glColor3f(0.0, 1.0, 0.0);
+    for (const auto & pt : data) {
+        glVertex3f(pt.easting / 100 - std::abs(x),
+                   pt.height / 1000,
+                   pt.northing / 100 - std::abs(y));
+    }
     glEnd();
 };
