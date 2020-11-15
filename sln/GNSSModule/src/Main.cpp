@@ -101,5 +101,8 @@ static void printGPSData(OEM4 oem4) {
  * Print expected and actual CRC value
  */
 static void printCRC32Value(uint32_t expected, uint32_t actual) {
-    std::cout << "Expected: " << expected << ", Actual: " << actual << std::endl;
+    if (expected == actual)
+        std::cout << "CRC32: " << expected << " == " << actual << "\t";
+    else
+        std::cout << "CRC32: " << expected << " != " << actual << std::endl;
 }
