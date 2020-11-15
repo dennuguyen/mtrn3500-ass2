@@ -11,7 +11,8 @@
 
 
 static uint32_t getCRC32(const unsigned char* data, int n);
-static void printGPSData(OEM4 oem4, uint32_t crc);
+static void printGPSData(OEM4 oem4);
+static void printCRC32Value(OEM4 oem4, uint32_t crc);
 
 int main(int argc, char* argv[]) {
     // Create file mapping object for this process
@@ -39,18 +40,22 @@ int main(int argc, char* argv[]) {
             unsigned char* buffer = (unsigned char*)(client.tcpReceive());
             unsigned char headerLength = *(buffer + 3);
 
-            // Get CRC value
-            uint32_t crc = *(uint32_t*)(buffer + headerLength + 80);
+            // Get expected and actual CRC32 values
+            uint32_t expected = *(uint32_t*)(buffer + headerLength + 80);
+            uint32_t actual = getCRC32(buffer, 108);
+
+            // Print CRC32 values
+            printCRC32Value(expected, actual);
 
             // Validate GPS data
-            if (getCRC32(buffer, 108) == crc) {
+            if (expected == actual) {
 
                 // Process GPS data and store in shared memory
                 OEM4* oem4 = (OEM4*)map.getBaseAddress();
                 *oem4 = *(OEM4*)(buffer + headerLength + 16);
 
                 // Print GPS data
-                printGPSData(*oem4, crc);
+                printGPSData(*oem4);
             }
 
             // Set heartbeat
@@ -88,7 +93,13 @@ static uint32_t getCRC32(const unsigned char* data, int n) {
 /**
  * Print GPS data which includes Northing, Easting, Height and CRC
  */
-static void printGPSData(OEM4 oem4, uint32_t crc) {
+static void printGPSData(OEM4 oem4) {
     std::cout << "(N: " << oem4.northing << ", E: " << oem4.easting << ", H: " << oem4.height << ")";
-    std::cout << " + " << crc << std::endl;
+}
+
+/**
+ * Print expected and actual CRC value
+ */
+static void printCRC32Value(uint32_t expected, uint32_t actual) {
+    std::cout << "Expected: " << expected << ", Actual: " << actual << std::endl;
 }
