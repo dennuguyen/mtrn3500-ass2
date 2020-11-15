@@ -12,7 +12,7 @@
 
 static uint32_t getCRC32(const unsigned char* data, int n);
 static void printGPSData(OEM4 oem4);
-static void printCRC32Value(OEM4 oem4, uint32_t crc);
+static void printCRC32Value(uint32_t oem4, uint32_t crc);
 
 int main(int argc, char* argv[]) {
     // Create file mapping object for this process
