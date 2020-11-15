@@ -13,13 +13,9 @@
 
 static std::tuple<double, double, bool> teleopInput();
 static double limit(double value, double min, double max);
+static void printCommand(std::string command);
 
 int main(int argc, char* argv[]) {
-    // Create file mapping object for this process
-    sm::FileMappingObject map(mod::TELEOP.name, sm::SIZE);
-    map.openFileMapping();
-    map.mappedViewAddr();
-
     // Create file mapping object to process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
     management.openFileMapping();
@@ -52,13 +48,12 @@ int main(int argc, char* argv[]) {
             command << "# " << steer << " " << speed << " " << flag << " #";
             std::cout << client.tcpSend(command.str()) << std::endl;
 
+            // Print sent message
+            printCommand(command.str());
+
             // Give server time to prepare data
             Sleep(500);
-            /*
-            // Confirm command
-            std::string buffer = client.tcpReceive();
-            std::cout << buffer << std::endl;
-            */
+            
             // Set heartbeat
             *heartbeat = true;
             timer.time(tmr::TIMEOUT_2S);
@@ -74,9 +69,36 @@ int main(int argc, char* argv[]) {
 
 static std::tuple<double, double, bool> teleopInput() {
 
-    // Get teleop values
     double steer, speed;
     bool flag;
+
+    // Read pressed keys
+    if (KeyManager::get()->isAsciiKeyPressed('w')) {
+        speed = 1.0;
+    } else {
+        speed = 0.0;
+    }
+
+    if (KeyManager::get()->isAsciiKeyPressed('a')) {
+        speed = -1.0;
+    } else {
+        speed = 0.0;
+    }
+
+    if (KeyManager::get()->isAsciiKeyPressed('s')) {
+        steer = 40.0;
+    } else {
+        steer = 0.0;
+    }
+
+    if (KeyManager::get()->isAsciiKeyPressed('d')) {
+        steer = -40.0;
+    } else {
+        steer = 0.0;
+    }
+
+    // Get teleop values
+    
     std::cout << "<steer> <speed> <flag> ";
     std::cin >> steer >> speed >> flag;
 
@@ -96,4 +118,11 @@ static double limit(double value, double min, double max) {
     if (value < min)
         return min;
     return value;
+}
+
+/**
+ * Limit some value by minand max
+ */
+static void printCommand(std::string command) {
+    std::cout << command.c_str() << std::endl;
 }
