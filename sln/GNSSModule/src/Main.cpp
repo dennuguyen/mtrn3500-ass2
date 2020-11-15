@@ -94,7 +94,7 @@ static uint32_t getCRC32(const unsigned char* data, int n) {
  * Print GPS data which includes Northing, Easting, Height and CRC
  */
 static void printGPSData(OEM4 oem4) {
-    std::cout << "(N: " << oem4.northing << ", E: " << oem4.easting << ", H: " << oem4.height << ")";
+    std::cout << "(N: " << oem4.northing << ", E: " << oem4.easting << ", H: " << oem4.height << ")" << std::endl;
 }
 
 /**
