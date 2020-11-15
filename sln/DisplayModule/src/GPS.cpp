@@ -18,6 +18,9 @@ GPS::GPS() : gps(mod::GPS.name, sm::SIZE), numPoints(30), head(-1), tail(-1), da
     timer.time(tmr::TIMEOUT_1S); // update draw every 1 second
 }
 
+/**
+ * Update the data vector with GPS data on a timely basis
+ */
 void GPS::update() {
     if (timer.expired()) {
         data.push_back(*(OEM4*)((char*)gps.getBaseAddress()));
@@ -30,9 +33,11 @@ void GPS::draw(double x, double y) {
     glBegin(GL_LINES);
     glColor3f(0.0, 1.0, 0.0);
     for (const auto & pt : data) {
-        glVertex3f(pt.easting / 100 - std::abs(x),
-                   pt.height / 1000,
-                   pt.northing / 100 - std::abs(y));
+        if (d_cmp(pt.height, 0.0, eps) == false) {
+            glVertex3f(pt.easting / 1 - std::abs(x),
+                pt.height / 1000,
+                pt.northing / 1 - std::abs(y));
+        }
     }
     glEnd();
 };
