@@ -60,6 +60,9 @@ int main(int argc, char* argv[]) {
     return EXIT_SUCCESS;
 }
 
+/**
+ * Gets teleop input from key press and packages it as a tuple
+ */
 static std::tuple<double, double, bool> teleopInput() {
 
     double steer = 0.0, speed = 0.0;
