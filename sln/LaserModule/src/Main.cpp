@@ -100,7 +100,7 @@ static int parsePointCloud(std::string data, PointList* coords) {
     for (unsigned int i = 6; i < numData + 6; i++) {
         unsigned long radius = std::stol(dataVector.at(i), nullptr, 16);
         (*coords)[i] = { radius * cos(angle * 3.1415 / 180), radius * sin(angle * 3.1415 / 180) };
-        angle += 0.5;
+        angle += stepWidth;
     }
 
     return numData;
