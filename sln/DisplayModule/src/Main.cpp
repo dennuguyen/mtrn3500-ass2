@@ -174,46 +174,46 @@ double getTime()
 
 void idle() {
 
-	if (KeyManager::get()->isAsciiKeyPressed('a')) {
+	if (KeyManager::get().isAsciiKeyPressed('a')) {
 		Camera::get()->strafeLeft();
 	}
 
-	if (KeyManager::get()->isAsciiKeyPressed('c')) {
+	if (KeyManager::get().isAsciiKeyPressed('c')) {
 		Camera::get()->strafeDown();
 	}
 
-	if (KeyManager::get()->isAsciiKeyPressed('d')) {
+	if (KeyManager::get().isAsciiKeyPressed('d')) {
 		Camera::get()->strafeRight();
 	}
 
-	if (KeyManager::get()->isAsciiKeyPressed('s')) {
+	if (KeyManager::get().isAsciiKeyPressed('s')) {
 		Camera::get()->moveBackward();
 	}
 
-	if (KeyManager::get()->isAsciiKeyPressed('w')) {
+	if (KeyManager::get().isAsciiKeyPressed('w')) {
 		Camera::get()->moveForward();
 	}
 
-	if (KeyManager::get()->isAsciiKeyPressed(' ')) {
+	if (KeyManager::get().isAsciiKeyPressed(' ')) {
 		Camera::get()->strafeUp();
 	}
 
 	speed = 0;
 	steering = 0;
 
-	if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_LEFT)) {
+	if (KeyManager::get().isSpecialKeyPressed(GLUT_KEY_LEFT)) {
 		steering = Vehicle::MAX_LEFT_STEERING_DEGS * -1;   
 	}
 
-	if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_RIGHT)) {
+	if (KeyManager::get().isSpecialKeyPressed(GLUT_KEY_RIGHT)) {
 		steering = Vehicle::MAX_RIGHT_STEERING_DEGS * -1;
 	}
 
-	if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_UP)) {
+	if (KeyManager::get().isSpecialKeyPressed(GLUT_KEY_UP)) {
 		speed = Vehicle::MAX_FORWARD_SPEED_MPS;
 	}
 
-	if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_DOWN)) {
+	if (KeyManager::get().isSpecialKeyPressed(GLUT_KEY_DOWN)) {
 		speed = Vehicle::MAX_BACKWARD_SPEED_MPS;
 	}
 
@@ -251,7 +251,7 @@ void keydown(unsigned char key, int x, int y) {
 
 	// keys that will be held down for extended periods of time will be handled
 	//   in the idle function
-	KeyManager::get()->asciiKeyPressed(key);
+	KeyManager::get().asciiKeyPressed(key);
 
 	// keys that react ocne when pressed rather than need to be held down
 	//   can be handles normally, like this...
@@ -269,15 +269,15 @@ void keydown(unsigned char key, int x, int y) {
 };
 
 void keyup(unsigned char key, int x, int y) {
-	KeyManager::get()->asciiKeyReleased(key);
+	KeyManager::get().asciiKeyReleased(key);
 };
 
 void special_keydown(int keycode, int x, int y) {
-	KeyManager::get()->specialKeyPressed(keycode);
+	KeyManager::get().specialKeyPressed(keycode);
 };
 
 void special_keyup(int keycode, int x, int y) {  
-	KeyManager::get()->specialKeyReleased(keycode);  
+	KeyManager::get().specialKeyReleased(keycode);  
 };
 
 void mouse(int button, int state, int x, int y) {
