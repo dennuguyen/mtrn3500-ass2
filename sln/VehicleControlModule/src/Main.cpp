@@ -6,7 +6,6 @@
 #include <sstream>
 #include <thread>
 
-#include "KeyManager.hpp"
 #include "Modules.hpp"
 #include "SharedMemory.hpp"
 #include "TCPClient.hpp"
@@ -68,23 +67,18 @@ static std::tuple<double, double, bool> teleopInput() {
     double steer = 0.0, speed = 0.0;
     bool flag = 0;
 
-    if (KeyManager::get().isAsciiKeyPressed('w')) {
+    if (GetAsyncKeyState('W'))
         speed = 1.0;
-    }
 
-    if (KeyManager::get().isAsciiKeyPressed('a')) {
+    if (GetAsyncKeyState('S'))
         speed = -1.0;
-    }
 
-    if (KeyManager::get().isAsciiKeyPressed('s')) {
+    if (GetAsyncKeyState('A'))
         steer = 40.0;
-    }
 
-    if (KeyManager::get().isAsciiKeyPressed('d')) {
+    if (GetAsyncKeyState('D'))
         steer = -40.0;
-    }
     
-    // Limit teleop values
     steer = limit(steer, -40, 40);
     speed = limit(speed, -1, 1);
 
