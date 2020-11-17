@@ -3,6 +3,7 @@
 
 #include "OEM4.hpp"
 #include "SharedMemory.hpp"
+#include "Timer.hpp"
 
 class GPS {
    public:
@@ -14,10 +15,11 @@ class GPS {
 
    private:
 	sm::FileMappingObject gps;
-	uint8_t* numPoints;
-	int8_t* head;
-	int8_t* tail;
-	OEM4* data;
+	int numPoints;
+	int head;
+	int tail;
+	std::vector<OEM4> data;
+	tmr::Timer timer;
 };
 
 #endif  // MTRN3500_GPS_HPP_

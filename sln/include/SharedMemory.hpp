@@ -29,6 +29,9 @@ class FileMappingObject {
 
     ~FileMappingObject() {}
 
+    /**
+     * Creates a new handle for creating the file mapping object
+     */
     HANDLE createFileMapping() {
         createHandle = CreateFileMapping(INVALID_HANDLE_VALUE,
                                          NULL,
@@ -45,6 +48,9 @@ class FileMappingObject {
         return createHandle;
     }
 
+    /**
+     * Creates a new handle for accessing the file mapping object
+     */
     HANDLE openFileMapping() {
         accessHandle = OpenFileMapping(FILE_MAP_ALL_ACCESS,
                                        FALSE,
@@ -58,6 +64,9 @@ class FileMappingObject {
         return accessHandle;
     }
 
+    /**
+     * Gets the base address of the file mapping view
+     */
     LPVOID mappedViewAddr() {
         baseAddress = MapViewOfFile(accessHandle != NULL ? accessHandle : createHandle,
                                     FILE_MAP_ALL_ACCESS,

@@ -52,8 +52,11 @@ void mouse(int button, int state, int x, int y);
 void dragged(int x, int y);
 void motion(int x, int y);
 
+// Shared memory and heartbeats
 tmr::Timer timer;
 static bool* heartbeat;
+const static double* speed;
+const static double* steer;
 
 using namespace scos;
 
@@ -64,10 +67,7 @@ int prev_mouse_y = -1;
 
 // vehicle control related variables
 Vehicle* vehicle = nullptr;
-double speed = 0;
-double steering = 0;
 
-//int _tmain(int argc, _TCHAR* argv[]) {
 int main(int argc, char* argv[]) {
 	
 	const int WINDOW_WIDTH = 800;
@@ -102,6 +102,13 @@ int main(int argc, char* argv[]) {
 	sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
 	management.openFileMapping();
 	heartbeat = (bool*)((char*)management.mappedViewAddr() + mod::DISPLAY.heartbeat);
+
+	// Create file mapping object to teleoperations
+	sm::FileMappingObject teleop(mod::TELEOP.name, sm::SIZE);
+	teleop.openFileMapping();
+	teleop.mappedViewAddr();
+	steer = (double*)((char*)teleop.getBaseAddress());
+	speed = (double*)((char*)teleop.getBaseAddress() + sizeof(double));
 
 	// Start timer
 	timer.time(tmr::TIMEOUT_4S);
@@ -174,51 +181,31 @@ double getTime()
 
 void idle() {
 
-	if (KeyManager::get()->isAsciiKeyPressed('a')) {
+	if (KeyManager::get().isAsciiKeyPressed('a')) {
 		Camera::get()->strafeLeft();
 	}
 
-	if (KeyManager::get()->isAsciiKeyPressed('c')) {
+	if (KeyManager::get().isAsciiKeyPressed('c')) {
 		Camera::get()->strafeDown();
 	}
 
-	if (KeyManager::get()->isAsciiKeyPressed('d')) {
+	if (KeyManager::get().isAsciiKeyPressed('d')) {
 		Camera::get()->strafeRight();
 	}
 
-	if (KeyManager::get()->isAsciiKeyPressed('s')) {
+	if (KeyManager::get().isAsciiKeyPressed('s')) {
 		Camera::get()->moveBackward();
 	}
 
-	if (KeyManager::get()->isAsciiKeyPressed('w')) {
+	if (KeyManager::get().isAsciiKeyPressed('w')) {
 		Camera::get()->moveForward();
 	}
 
-	if (KeyManager::get()->isAsciiKeyPressed(' ')) {
+	if (KeyManager::get().isAsciiKeyPressed(' ')) {
 		Camera::get()->strafeUp();
 	}
 
-	speed = 0;
-	steering = 0;
-
-	if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_LEFT)) {
-		steering = Vehicle::MAX_LEFT_STEERING_DEGS * -1;   
-	}
-
-	if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_RIGHT)) {
-		steering = Vehicle::MAX_RIGHT_STEERING_DEGS * -1;
-	}
-
-	if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_UP)) {
-		speed = Vehicle::MAX_FORWARD_SPEED_MPS;
-	}
-
-	if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_DOWN)) {
-		speed = Vehicle::MAX_BACKWARD_SPEED_MPS;
-	}
-
 	const float sleep_time_between_frames_in_seconds = 0.025;
-
 	static double previousTime = getTime();
 	const double currTime = getTime();
 	const double elapsedTime = currTime - previousTime;
@@ -226,7 +213,7 @@ void idle() {
 
 	// do a simulation step
 	if (vehicle != NULL) {
-		vehicle->update(speed, steering, elapsedTime);
+		vehicle->update(*speed, -(*steer), elapsedTime);
 	}
 
 	display();
@@ -251,7 +238,7 @@ void keydown(unsigned char key, int x, int y) {
 
 	// keys that will be held down for extended periods of time will be handled
 	//   in the idle function
-	KeyManager::get()->asciiKeyPressed(key);
+	KeyManager::get().asciiKeyPressed(key);
 
 	// keys that react ocne when pressed rather than need to be held down
 	//   can be handles normally, like this...
@@ -269,15 +256,15 @@ void keydown(unsigned char key, int x, int y) {
 };
 
 void keyup(unsigned char key, int x, int y) {
-	KeyManager::get()->asciiKeyReleased(key);
+	KeyManager::get().asciiKeyReleased(key);
 };
 
 void special_keydown(int keycode, int x, int y) {
-	KeyManager::get()->specialKeyPressed(keycode);
+	KeyManager::get().specialKeyPressed(keycode);
 };
 
 void special_keyup(int keycode, int x, int y) {  
-	KeyManager::get()->specialKeyReleased(keycode);  
+	KeyManager::get().specialKeyReleased(keycode);  
 };
 
 void mouse(int button, int state, int x, int y) {

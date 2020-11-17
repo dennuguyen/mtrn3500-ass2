@@ -41,9 +41,6 @@ int main(int argc, char* argv[]) {
     processes.reserve(numModules);
     for (mod::ModuleInfo minfo : mod::STARTUP) {
 
-        if (minfo.name == mod::TELEOP.name)
-            continue;
-
         Process process(minfo);  // create new process
 
         // Only add display module to job manager

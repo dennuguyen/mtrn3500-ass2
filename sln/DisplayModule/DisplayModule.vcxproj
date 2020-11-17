@@ -90,7 +90,6 @@
     <ClCompile Include="src\GPS.cpp" />
     <ClCompile Include="src\Ground.cpp" />
     <ClCompile Include="src\HUD.cpp" />
-    <ClCompile Include="src\KeyManager.cpp" />
     <ClCompile Include="src\LIDAR.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Messages.cpp" />
@@ -106,7 +105,6 @@
     <ClInclude Include="include\GPS.hpp" />
     <ClInclude Include="include\Ground.hpp" />
     <ClInclude Include="include\HUD.hpp" />
-    <ClInclude Include="include\KeyManager.hpp" />
     <ClInclude Include="include\LIDAR.hpp" />
     <ClInclude Include="include\Messages.hpp" />
     <ClInclude Include="include\MyVehicle.hpp" />

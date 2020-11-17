@@ -6,19 +6,22 @@
 #include <sstream>
 #include <thread>
 
+#include "KeyManager.hpp"
 #include "Modules.hpp"
 #include "SharedMemory.hpp"
 #include "TCPClient.hpp"
 #include "Timer.hpp"
 
-static std::tuple<double, double, bool> teleopInput();
+static std::tuple<double, double> teleopInput();
 static double limit(double value, double min, double max);
+static void printCommand(std::string command);
 
 int main(int argc, char* argv[]) {
-    // Create file mapping object for this process
-    sm::FileMappingObject map(mod::TELEOP.name, sm::SIZE);
-    map.openFileMapping();
-    map.mappedViewAddr();
+
+    // Create file mapping object for teleoperation
+    sm::FileMappingObject teleop(mod::TELEOP.name, sm::SIZE);
+    teleop.createFileMapping();
+    teleop.mappedViewAddr();
 
     // Create file mapping object to process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
@@ -34,31 +37,31 @@ int main(int argc, char* argv[]) {
     timer.time(tmr::TIMEOUT_4S);
 
     // Create thread for nonblocking teleop
-    std::future<std::tuple<double, double, bool>> teleop = std::async(&teleopInput);
+    std::future<std::tuple<double, double>> teleopThread = std::async(&teleopInput);
+
+    // Teleop flag to UGV server
+    bool flag = 0;
 
     while (!timer.expired()) {
         if (*heartbeat == false) {
 
-            double steer = 20.0;
-            double speed = 0.3;
-            bool flag = 1;
-            
-            // Get teleop values
-            // auto [steer, speed, flag] = teleop.get();
-
-            // Send teleop
-            std::cout << "Sending command" << std::endl;
+            // Get teleop command
             std::stringstream command;
-            command << "# " << steer << " " << speed << " " << flag << " #";
+            auto [steer, speed] = teleopInput();
+            command << "# " << steer << " " << speed << " " << (flag = !flag) << " #";
+
+            // Store steer and speed in shared memory
+            double* steerAddr = (double*)((char*)teleop.getBaseAddress());
+            double* speedAddr = (double*)((char*)teleop.getBaseAddress() + sizeof(double));
+            *steerAddr = steer;
+            *speedAddr = speed;
+
+            // Send teleop command
             std::cout << client.tcpSend(command.str()) << std::endl;
 
-            // Give server time to prepare data
-            Sleep(500);
-            /*
-            // Confirm command
-            std::string buffer = client.tcpReceive();
-            std::cout << buffer << std::endl;
-            */
+            // Print teleop command
+            printCommand(command.str());
+
             // Set heartbeat
             *heartbeat = true;
             timer.time(tmr::TIMEOUT_2S);
@@ -72,19 +75,29 @@ int main(int argc, char* argv[]) {
     return EXIT_SUCCESS;
 }
 
-static std::tuple<double, double, bool> teleopInput() {
+/**
+ * Gets teleop input from key press and packages it as a tuple
+ */
+static std::tuple<double, double> teleopInput() {
 
-    // Get teleop values
-    double steer, speed;
-    bool flag;
-    std::cout << "<steer> <speed> <flag> ";
-    std::cin >> steer >> speed >> flag;
+    double steer = 0.0, speed = 0.0;
+    
+    if (KeyManager::get().isAsciiKeyPressed('w'))
+        speed = 1.0;
 
-    // Limit teleop values
+    if (KeyManager::get().isAsciiKeyPressed('s'))
+        speed = -1.0;
+
+    if (KeyManager::get().isAsciiKeyPressed('a'))
+        steer = 40.0;
+
+    if (KeyManager::get().isAsciiKeyPressed('d'))
+        steer = -40.0;
+
     steer = limit(steer, -40, 40);
     speed = limit(speed, -1, 1);
 
-    return {steer, speed, flag};
+    return { steer, speed };
 }
 
 /**
@@ -96,4 +109,11 @@ static double limit(double value, double min, double max) {
     if (value < min)
         return min;
     return value;
+}
+
+/**
+ * Limit some value by minand max
+ */
+static void printCommand(std::string command) {
+    std::cout << command.c_str() << std::endl;
 }

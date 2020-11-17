@@ -23,7 +23,7 @@ Deliverables:
     * Read/write access to camera data [x]
     * Read/write access to vehicle control data [x]
     * Read/write access to process management data [x]
-* Start all other processes in logical sequence suitable for teleop of UGV []
+* Start all other processes in logical sequence suitable for teleop of UGV [x]
 * Monitor process heartbeats [x]
   * Shutdown event if failure of critical process [x]
   * Attempt to restart failed non-critical processes [x]
@@ -45,7 +45,7 @@ Deliverables:
 * Process binary data to get (X,Y) in UTM coordinates and heigh in metres [x]
 * Store processed data in shared memory [x]
 * Print Northing, Easting, Height in metres and CRC value [x]
-* Stored data needs to be include old data []
+* Stored data needs to be include old data [x]
 
 ### Camera Module
 
@@ -56,13 +56,13 @@ Deliverables:
 ### Vehicle Control Module
 
 * Write client to connect to UGV server (192.168.1.200:25000) [x]
-* Send ASCII messages to teleop the UGV []
-* Get key commands from display module and send as message for teleop []
+* Send ASCII messages to teleop the UGV [x]
+* Get key commands from display module and send as message for teleop [x]
 
 ### Display Module
 
 * Plot laser scan data [x]
-* Plot GNSS data as a line []
+* Plot GNSS data as a line [x]
 
 ## Assessment
 1. Complete above
