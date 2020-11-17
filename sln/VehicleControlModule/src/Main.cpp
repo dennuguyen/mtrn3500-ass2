@@ -1,10 +1,7 @@
 #include <Winsock2.h>
 
-#include <conio.h>
-#include <future>
 #include <iostream>
 #include <sstream>
-#include <thread>
 
 #include "Modules.hpp"
 #include "SharedMemory.hpp"
@@ -36,9 +33,6 @@ int main(int argc, char* argv[]) {
     // Create timer
     tmr::Timer timer;
     timer.time(tmr::TIMEOUT_4S);
-
-    // Create thread for nonblocking teleop
-    //std::future<std::tuple<double, double>> teleopThread = std::async(&teleopInput);
 
     // Teleop flag to UGV server
     bool flag = 0;
