@@ -1,12 +1,8 @@
 #include <Winsock2.h>
-#include <conio.h>
 
-#include <future>
 #include <iostream>
 #include <sstream>
-#include <thread>
 
-#include "KeyManager.hpp"
 #include "Modules.hpp"
 #include "SharedMemory.hpp"
 #include "TCPClient.hpp"
@@ -21,6 +17,8 @@ int main(int argc, char* argv[]) {
     sm::FileMappingObject teleop(mod::TELEOP.name, sm::SIZE);
     teleop.createFileMapping();
     teleop.mappedViewAddr();
+    double* steerAddr = (double*)((char*)teleop.getBaseAddress());
+    double* speedAddr = (double*)((char*)teleop.getBaseAddress() + sizeof(double));
 
     // Create file mapping object to process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
@@ -35,9 +33,6 @@ int main(int argc, char* argv[]) {
     tmr::Timer timer;
     timer.time(tmr::TIMEOUT_4S);
 
-    // Create thread for nonblocking teleop
-    std::future<std::tuple<double, double>> teleopThread = std::async(&teleopInput);
-
     // Teleop flag to UGV server
     bool flag = 0;
 
@@ -49,8 +44,6 @@ int main(int argc, char* argv[]) {
             command << "# " << steer << " " << speed << " " << (flag = !flag) << " #";
 
             // Store steer and speed in shared memory
-            double* steerAddr = (double*)((char*)teleop.getBaseAddress());
-            double* speedAddr = (double*)((char*)teleop.getBaseAddress() + sizeof(double));
             *steerAddr = steer;
             *speedAddr = speed;
 
@@ -79,17 +72,19 @@ int main(int argc, char* argv[]) {
 static std::tuple<double, double> teleopInput() {
     double steer = 0.0, speed = 0.0;
 
-    if (KeyManager::get().isAsciiKeyPressed('w'))
-        speed = 1.0;
+    if (GetConsoleWindow() == GetForegroundWindow()) {
+        if (GetAsyncKeyState('W'))
+            speed = 1.0;
 
-    if (KeyManager::get().isAsciiKeyPressed('s'))
-        speed = -1.0;
+        if (GetAsyncKeyState('S'))
+            speed = -1.0;
 
-    if (KeyManager::get().isAsciiKeyPressed('a'))
-        steer = 40.0;
+        if (GetAsyncKeyState('A'))
+            steer = 40.0;
 
-    if (KeyManager::get().isAsciiKeyPressed('d'))
-        steer = -40.0;
+        if (GetAsyncKeyState('D'))
+            steer = -40.0;
+    }
 
     steer = limit(steer, -40, 40);
     speed = limit(speed, -1, 1);

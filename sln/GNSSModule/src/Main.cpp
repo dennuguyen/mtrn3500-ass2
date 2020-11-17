@@ -18,6 +18,7 @@ int main(int argc, char* argv[]) {
     sm::FileMappingObject map(mod::GPS.name, sm::SIZE);
     map.openFileMapping();
     map.mappedViewAddr();
+    OEM4* oem4 = (OEM4*)map.getBaseAddress();
 
     // Create file mapping object to process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
@@ -48,7 +49,6 @@ int main(int argc, char* argv[]) {
             // Validate GPS data
             if (expected == actual) {
                 // Process GPS data and store in shared memory
-                OEM4* oem4 = (OEM4*)map.getBaseAddress();
                 *oem4 = *(OEM4*)(buffer + headerLength + 16);
 
                 // Print GPS data
@@ -98,8 +98,5 @@ static void printGPSData(OEM4 oem4) {
  * Print expected and actual CRC value
  */
 static void printCRC32Value(uint32_t expected, uint32_t actual) {
-    if (expected == actual)
-        std::cout << "CRC32: " << expected << " == " << actual << "\t";
-    else
-        std::cout << "CRC32: " << expected << " != " << actual << std::endl;
+    std::cout << "CRC32: " << expected << (expected == actual ? " == " : " != ") << actual << "\t";
 }
