@@ -6,7 +6,6 @@
 #include <sstream>
 #include <thread>
 
-#include "KeyManager.hpp"
 #include "Modules.hpp"
 #include "SharedMemory.hpp"
 #include "TCPClient.hpp"
