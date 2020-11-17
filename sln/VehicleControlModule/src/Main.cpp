@@ -17,9 +17,10 @@ static double limit(double value, double min, double max);
 static void printCommand(std::string command);
 
 int main(int argc, char* argv[]) {
-    // Create file mapping object to teleoperations
+
+    // Create file mapping object for teleoperation
     sm::FileMappingObject teleop(mod::TELEOP.name, sm::SIZE);
-    teleop.openFileMapping();
+    teleop.createFileMapping();
     teleop.mappedViewAddr();
 
     // Create file mapping object to process management
