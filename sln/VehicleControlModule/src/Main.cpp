@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
     timer.time(tmr::TIMEOUT_4S);
 
     // Create thread for nonblocking teleop
-    std::future<std::tuple<double, double, bool>> teleopThread = std::async(&teleopInput);
+    std::future<std::tuple<double, double>> teleopThread = std::async(&teleopInput);
 
     // Teleop flag to UGV server
     bool flag = 0;
