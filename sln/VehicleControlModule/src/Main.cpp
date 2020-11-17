@@ -82,17 +82,19 @@ static std::tuple<double, double> teleopInput() {
 
     double steer = 0.0, speed = 0.0;
     
-    if (KeyManager::get().isAsciiKeyPressed('w'))
-        speed = 1.0;
+    if (GetConsoleWindow() == GetForegroundWindow()) {
+        if (GetAsyncKeyState('W'))
+            speed = 1.0;
 
-    if (KeyManager::get().isAsciiKeyPressed('s'))
-        speed = -1.0;
+        if (GetAsyncKeyState('S'))
+            speed = -1.0;
 
-    if (KeyManager::get().isAsciiKeyPressed('a'))
-        steer = 40.0;
+        if (GetAsyncKeyState('A'))
+            steer = 40.0;
 
-    if (KeyManager::get().isAsciiKeyPressed('d'))
-        steer = -40.0;
+        if (GetAsyncKeyState('D'))
+            steer = -40.0;
+    }
 
     steer = limit(steer, -40, 40);
     speed = limit(speed, -1, 1);
