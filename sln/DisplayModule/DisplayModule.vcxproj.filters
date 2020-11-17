@@ -68,9 +68,6 @@
     <ClInclude Include="include\HUD.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\KeyManager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Messages.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
