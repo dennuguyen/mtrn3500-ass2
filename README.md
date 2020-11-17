@@ -56,8 +56,8 @@ Deliverables:
 ### Vehicle Control Module
 
 * Write client to connect to UGV server (192.168.1.200:25000) [x]
-* Send ASCII messages to teleop the UGV []
-* Get key commands from display module and send as message for teleop []
+* Send ASCII messages to teleop the UGV [x]
+* Get key commands from display module and send as message for teleop [x]
 
 ### Display Module
 
