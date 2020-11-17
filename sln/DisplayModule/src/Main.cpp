@@ -181,27 +181,27 @@ double getTime()
 
 void idle() {
 
-	if (KeyManager::get().isAsciiKeyPressed('j')) {
+	if (KeyManager::get().isAsciiKeyPressed('a')) {
 		Camera::get()->strafeLeft();
 	}
 
-	if (KeyManager::get().isAsciiKeyPressed('k')) {
+	if (KeyManager::get().isAsciiKeyPressed('c')) {
 		Camera::get()->strafeDown();
 	}
 
-	if (KeyManager::get().isAsciiKeyPressed('l')) {
+	if (KeyManager::get().isAsciiKeyPressed('d')) {
 		Camera::get()->strafeRight();
 	}
 
-	if (KeyManager::get().isAsciiKeyPressed('m')) {
+	if (KeyManager::get().isAsciiKeyPressed('s')) {
 		Camera::get()->moveBackward();
 	}
 
-	if (KeyManager::get().isAsciiKeyPressed('i')) {
+	if (KeyManager::get().isAsciiKeyPressed('w')) {
 		Camera::get()->moveForward();
 	}
 
-	if (KeyManager::get().isAsciiKeyPressed(',')) {
+	if (KeyManager::get().isAsciiKeyPressed(' ')) {
 		Camera::get()->strafeUp();
 	}
 
