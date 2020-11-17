@@ -19,6 +19,7 @@ int main(int argc, char* argv[]) {
     sm::FileMappingObject map(mod::GPS.name, sm::SIZE);
     map.openFileMapping();
     map.mappedViewAddr();
+    OEM4* oem4 = (OEM4*)map.getBaseAddress();
 
     // Create file mapping object to process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
@@ -51,7 +52,6 @@ int main(int argc, char* argv[]) {
             if (expected == actual) {
 
                 // Process GPS data and store in shared memory
-                OEM4* oem4 = (OEM4*)map.getBaseAddress();
                 *oem4 = *(OEM4*)(buffer + headerLength + 16);
 
                 // Print GPS data

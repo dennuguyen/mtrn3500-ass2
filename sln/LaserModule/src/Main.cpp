@@ -22,6 +22,8 @@ int main(int argc, char* argv[]) {
     sm::FileMappingObject map(mod::LASER.name, sm::SIZE);
     map.openFileMapping();
     map.mappedViewAddr();
+    uint16_t* numPoints = (uint16_t*)((char*)map.getBaseAddress());
+    PointList* points = (PointList*)((char*)map.getBaseAddress() + 16);
 
     // Create file mapping object to process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
@@ -51,8 +53,6 @@ int main(int argc, char* argv[]) {
             std::string buffer = client.tcpReceive();
 
             // Process and store laser scan data in shared memory
-            uint16_t* numPoints = (uint16_t*)((char*)map.getBaseAddress());
-            PointList* points = (PointList*)((char*)map.getBaseAddress() + 16);
             *numPoints = parsePointCloud(buffer, points);
 
             // Print points

@@ -9,9 +9,6 @@ class LIDAR {
 	void draw();
 
    private:
-	void update();
-
-   private:
 	sm::FileMappingObject laser;
 	uint16_t* numPoints;
 	std::pair<double, double>* points;

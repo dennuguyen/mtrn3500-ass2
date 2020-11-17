@@ -14,16 +14,11 @@
 LIDAR::LIDAR() : laser(mod::LASER.name, sm::SIZE) {
     laser.openFileMapping();
     laser.mappedViewAddr();
-    update();
-}
-
-void LIDAR::update() {
     numPoints = (uint16_t*)((char*)laser.getBaseAddress());
     points = (std::pair<double, double>*)((char*)laser.getBaseAddress() + 16);
 }
 
 void LIDAR::draw() {
-    update();
     glTranslatef(0.5, 0, 0);
     glBegin(GL_LINES);
         for (int i = 0; i < *numPoints; i++) {

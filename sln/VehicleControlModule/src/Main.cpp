@@ -22,6 +22,8 @@ int main(int argc, char* argv[]) {
     sm::FileMappingObject teleop(mod::TELEOP.name, sm::SIZE);
     teleop.createFileMapping();
     teleop.mappedViewAddr();
+    double* steerAddr = (double*)((char*)teleop.getBaseAddress());
+    double* speedAddr = (double*)((char*)teleop.getBaseAddress() + sizeof(double));
 
     // Create file mapping object to process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
@@ -37,7 +39,7 @@ int main(int argc, char* argv[]) {
     timer.time(tmr::TIMEOUT_4S);
 
     // Create thread for nonblocking teleop
-    std::future<std::tuple<double, double>> teleopThread = std::async(&teleopInput);
+    //std::future<std::tuple<double, double>> teleopThread = std::async(&teleopInput);
 
     // Teleop flag to UGV server
     bool flag = 0;
@@ -51,8 +53,6 @@ int main(int argc, char* argv[]) {
             command << "# " << steer << " " << speed << " " << (flag = !flag) << " #";
 
             // Store steer and speed in shared memory
-            double* steerAddr = (double*)((char*)teleop.getBaseAddress());
-            double* speedAddr = (double*)((char*)teleop.getBaseAddress() + sizeof(double));
             *steerAddr = steer;
             *speedAddr = speed;
 
