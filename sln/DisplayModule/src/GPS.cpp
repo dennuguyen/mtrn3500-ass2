@@ -30,7 +30,7 @@ void GPS::update() {
 
 void GPS::draw(double x, double y) {
     update();
-    glBegin(GL_LINES);
+    glBegin(GL_LINE_STRIP);
     glColor3f(0.0, 1.0, 0.0);
     for (const auto & pt : data) {
         if (d_cmp(pt.height, 0.0, eps) == false) {
