@@ -11,7 +11,7 @@
 #include "TCPClient.hpp"
 #include "Timer.hpp"
 
-static std::tuple<double, double, bool> teleopInput();
+static std::tuple<double, double> teleopInput();
 static double limit(double value, double min, double max);
 static void printCommand(std::string command);
 
@@ -37,13 +37,16 @@ int main(int argc, char* argv[]) {
     // Create thread for nonblocking teleop
     std::future<std::tuple<double, double, bool>> teleopThread = std::async(&teleopInput);
 
+    // Teleop flag to UGV server
+    bool flag = 0;
+
     while (!timer.expired()) {
         if (*heartbeat == false) {
 
             // Get teleop command
             std::stringstream command;
-            auto [steer, speed, flag] = teleopInput();
-            command << "# " << steer << " " << speed << " " << flag << " #";
+            auto [steer, speed] = teleopInput();
+            command << "# " << steer << " " << speed << " " << (flag = !flag) << " #";
 
             // Store steer and speed in shared memory
             double* steerAddr = (double*)((char*)teleop.getBaseAddress());
@@ -73,10 +76,9 @@ int main(int argc, char* argv[]) {
 /**
  * Gets teleop input from key press and packages it as a tuple
  */
-static std::tuple<double, double, bool> teleopInput() {
+static std::tuple<double, double> teleopInput() {
 
     double steer = 0.0, speed = 0.0;
-    bool flag = 0;
     
     if (GetAsyncKeyState('W'))
         speed = 1.0;
@@ -90,13 +92,10 @@ static std::tuple<double, double, bool> teleopInput() {
     if (GetAsyncKeyState('D'))
         steer = -40.0;
 
-    if (GetAsyncKeyState(' '))
-        flag = 1;
-    
     steer = limit(steer, -40, 40);
     speed = limit(speed, -1, 1);
 
-    return { steer, speed, flag };
+    return { steer, speed };
 }
 
 /**
