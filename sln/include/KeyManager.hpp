@@ -35,4 +35,4 @@ class KeyManager {
     bool special_keys[1024];
 };
 
-#endif // KEYMANAGER_HPP_
+#endif  // KEYMANAGER_HPP_

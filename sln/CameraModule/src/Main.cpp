@@ -1,10 +1,9 @@
+#include <GL/freeglut.h>
+#include <Windows.h>
 #include <Winsock2.h>
+#include <turbojpeg.h>
 
 #include <iostream>
-
-#include <GL/freeglut.h>
-#include <turbojpeg.h>
-#include <Windows.h>
 #include <zmq.hpp>
 
 #include "Modules.hpp"
@@ -25,7 +24,6 @@ static void display();
 static void idle();
 
 int main(int argc, char* argv[]) {
-
     // Create file mapping object to process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
     management.openFileMapping();

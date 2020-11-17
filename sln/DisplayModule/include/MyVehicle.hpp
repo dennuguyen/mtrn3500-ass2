@@ -5,13 +5,12 @@
 #include "LIDAR.hpp"
 #include "Vehicle.hpp"
 
-class MyVehicle : public Vehicle
-{
-public:
-	MyVehicle();
-	virtual void draw();
-	LIDAR oem4;
-	GPS lms151;
+class MyVehicle : public Vehicle {
+   public:
+    MyVehicle();
+    virtual void draw();
+    LIDAR oem4;
+    GPS lms151;
 };
 
 #endif

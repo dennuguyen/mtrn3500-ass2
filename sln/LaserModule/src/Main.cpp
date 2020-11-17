@@ -1,8 +1,8 @@
 #include <Winsock2.h>
 
 #include <array>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <iterator>
 #include <sstream>
 
@@ -11,13 +11,12 @@
 #include "TCPClient.hpp"  // #include <Winsock2.h>
 #include "Timer.hpp"
 
-typedef std::array<std::pair<double, double>, 400>  PointList;
+typedef std::array<std::pair<double, double>, 400> PointList;
 
 static int parsePointCloud(std::string data, PointList* coords);
 static void printPoints(PointList coords);
 
 int main(int argc, char* argv[]) {
-
     // Create file mapping object for this process
     sm::FileMappingObject map(mod::LASER.name, sm::SIZE);
     map.openFileMapping();
@@ -38,7 +37,6 @@ int main(int argc, char* argv[]) {
 
     while (!timer.expired()) {
         if (*heartbeat == false) {
-            
             // Request laser scan data
             std::stringstream request;
             request << (char)0x02 << "sRN LMDscandata" << (char)0x03;
@@ -57,13 +55,13 @@ int main(int argc, char* argv[]) {
 
             // Print points
             printPoints(*points);
-            
+
             // Set heartbeat
             *heartbeat = true;
             timer.time(tmr::TIMEOUT_2S);
         }
 
-        Sleep(100); // 100 ms refresh rate
+        Sleep(100);  // 100 ms refresh rate
     }
 
     client.tcpClose();
@@ -76,11 +74,10 @@ int main(int argc, char* argv[]) {
  * the length of the coords array.
  */
 static int parsePointCloud(std::string data, PointList* coords) {
-
     // Tokenize data from hexadecimal
     std::stringstream dataStream;
     dataStream << data.substr(data.find("DIST1"));
-    std::vector<std::string> dataVector = { std::istream_iterator<std::string>{dataStream}, std::istream_iterator<std::string>{} };
+    std::vector<std::string> dataVector = {std::istream_iterator<std::string>{dataStream}, std::istream_iterator<std::string>{}};
 
     // Check valid data
     if (dataVector.at(0) != "DIST1") {
@@ -92,14 +89,14 @@ static int parsePointCloud(std::string data, PointList* coords) {
     double scalingFactor = std::stod(dataVector.at(1));
     double scalingOffset = std::stod(dataVector.at(2));  // always zero
     double startAngle = std::stoi(dataVector.at(3), nullptr, 16) / 10000.0;
-    double stepWidth = std::stoi(dataVector.at(4), nullptr, 16) / 10000.0 ; // 0.5 deg
+    double stepWidth = std::stoi(dataVector.at(4), nullptr, 16) / 10000.0;  // 0.5 deg
     int numData = std::stoi(dataVector.at(5), nullptr, 16);
-    
+
     // Parse data
     double angle = startAngle;
     for (unsigned int i = 6; i < numData + 6; i++) {
         unsigned long radius = std::stol(dataVector.at(i), nullptr, 16);
-        (*coords)[i] = { radius * cos(angle * 3.1415 / 180), radius * sin(angle * 3.1415 / 180) };
+        (*coords)[i] = {radius * cos(angle * 3.1415 / 180), radius * sin(angle * 3.1415 / 180)};
         angle += stepWidth;
     }
 
@@ -110,7 +107,8 @@ static int parsePointCloud(std::string data, PointList* coords) {
  * Prints the coordinates
  */
 static void printPoints(PointList coords) {
-    for (const auto & [x, y] : coords)
+    for (const auto& [x, y] : coords)
         std::cout << "(" << x << ", " << y << ")" << std::endl;
-    std::cout << std::endl << std::endl;
+    std::cout << std::endl
+              << std::endl;
 }

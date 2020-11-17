@@ -7,4 +7,4 @@ struct OEM4 {
     double height;
 };
 
-#endif // OEM4_HPP_
+#endif  // OEM4_HPP_

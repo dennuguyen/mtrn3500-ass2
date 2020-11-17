@@ -1,21 +1,22 @@
 #include "GPS.hpp"
+
 #include "Modules.hpp"
 #include "Util.hpp"
 
 #ifdef __APPLE__
-    #include <OpenGL/gl.h>
+#include <OpenGL/gl.h>
 #elif defined(WIN32)
-    #include <Windows.h>
-    #include <GL/gl.h>
+#include <GL/gl.h>
+#include <Windows.h>
 #else
-    #include <GL/gl.h>
+#include <GL/gl.h>
 #endif
 
 GPS::GPS() : gps(mod::GPS.name, sm::SIZE), numPoints(30), head(-1), tail(-1), data() {
     gps.openFileMapping();
     gps.mappedViewAddr();
     update();
-    timer.time(tmr::TIMEOUT_1S); // update draw every 1 second
+    timer.time(tmr::TIMEOUT_1S);  // update draw every 1 second
 }
 
 /**
@@ -32,11 +33,11 @@ void GPS::draw(double x, double y) {
     update();
     glBegin(GL_LINE_STRIP);
     glColor3f(0.0, 1.0, 0.0);
-    for (const auto & pt : data) {
+    for (const auto& pt : data) {
         if (d_cmp(pt.height, 0.0, eps) == false) {
             glVertex3f(pt.easting / 1 - std::abs(x),
-                pt.height / 1000,
-                pt.northing / 1 - std::abs(y));
+                       pt.height / 1000,
+                       pt.northing / 1 - std::abs(y));
         }
     }
     glEnd();

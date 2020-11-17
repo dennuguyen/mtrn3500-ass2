@@ -5,16 +5,16 @@
 
 class LIDAR {
    public:
-	LIDAR();
-	void draw();
+    LIDAR();
+    void draw();
 
    private:
-	void update();
+    void update();
 
    private:
-	sm::FileMappingObject laser;
-	uint16_t* numPoints;
-	std::pair<double, double>* points;
+    sm::FileMappingObject laser;
+    uint16_t* numPoints;
+    std::pair<double, double>* points;
 };
 
 #endif  // MTRN3500_LINE_HPP_

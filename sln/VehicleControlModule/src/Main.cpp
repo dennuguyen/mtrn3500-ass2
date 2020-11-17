@@ -1,6 +1,6 @@
 #include <Winsock2.h>
-
 #include <conio.h>
+
 #include <future>
 #include <iostream>
 #include <sstream>
@@ -17,7 +17,6 @@ static double limit(double value, double min, double max);
 static void printCommand(std::string command);
 
 int main(int argc, char* argv[]) {
-
     // Create file mapping object for teleoperation
     sm::FileMappingObject teleop(mod::TELEOP.name, sm::SIZE);
     teleop.createFileMapping();
@@ -44,7 +43,6 @@ int main(int argc, char* argv[]) {
 
     while (!timer.expired()) {
         if (*heartbeat == false) {
-
             // Get teleop command
             std::stringstream command;
             auto [steer, speed] = teleopInput();
@@ -79,9 +77,8 @@ int main(int argc, char* argv[]) {
  * Gets teleop input from key press and packages it as a tuple
  */
 static std::tuple<double, double> teleopInput() {
-
     double steer = 0.0, speed = 0.0;
-    
+
     if (KeyManager::get().isAsciiKeyPressed('w'))
         speed = 1.0;
 
@@ -97,7 +94,7 @@ static std::tuple<double, double> teleopInput() {
     steer = limit(steer, -40, 40);
     speed = limit(speed, -1, 1);
 
-    return { steer, speed };
+    return {steer, speed};
 }
 
 /**

@@ -22,7 +22,6 @@ constexpr int numModules = 6;
 static void printHeartbeats(bool* heartbeats[]);
 
 int main(int argc, char* argv[]) {
-
     // Create the job manager
     //JobManager jm;
 
@@ -40,7 +39,6 @@ int main(int argc, char* argv[]) {
     std::vector<std::pair<Process, sm::FileMappingObject>> processes;
     processes.reserve(numModules);
     for (mod::ModuleInfo minfo : mod::STARTUP) {
-
         Process process(minfo);  // create new process
 
         // Only add display module to job manager
@@ -59,7 +57,6 @@ int main(int argc, char* argv[]) {
     // Enter loop
     while (!_kbhit()) {
         for (auto& process : processes) {
-
             // Printing heartbeats
             printHeartbeats(heartbeats);
 
@@ -94,5 +91,6 @@ static void printHeartbeats(bool* heartbeats[]) {
     std::cout << "C D G L M T" << std::endl;
     for (int i = 0; i < numModules; i++)
         std::cout << (*heartbeats)[i] << " ";
-    std::cout << std::endl << std::endl;
+    std::cout << std::endl
+              << std::endl;
 }

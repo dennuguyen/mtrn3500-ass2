@@ -9,7 +9,6 @@
 #include "TCPClient.hpp"  // #include <Winsock2.h>
 #include "Timer.hpp"
 
-
 static uint32_t getCRC32(const unsigned char* data, int n);
 static void printGPSData(OEM4 oem4);
 static void printCRC32Value(uint32_t oem4, uint32_t crc);
@@ -35,7 +34,6 @@ int main(int argc, char* argv[]) {
 
     while (!timer.expired()) {
         if (*heartbeat == false) {
-
             // Receive GPS data
             unsigned char* buffer = (unsigned char*)(client.tcpReceive());
             unsigned char headerLength = *(buffer + 3);
@@ -49,7 +47,6 @@ int main(int argc, char* argv[]) {
 
             // Validate GPS data
             if (expected == actual) {
-
                 // Process GPS data and store in shared memory
                 OEM4* oem4 = (OEM4*)map.getBaseAddress();
                 *oem4 = *(OEM4*)(buffer + headerLength + 16);
