@@ -16,6 +16,11 @@ static double limit(double value, double min, double max);
 static void printCommand(std::string command);
 
 int main(int argc, char* argv[]) {
+    // Create file mapping object to teleoperations
+    sm::FileMappingObject teleop(mod::TELEOP.name, sm::SIZE);
+    teleop.openFileMapping();
+    teleop.mappedViewAddr();
+
     // Create file mapping object to process management
     sm::FileMappingObject management(mod::MANAGE.name, sm::SIZE);
     management.openFileMapping();
@@ -30,7 +35,7 @@ int main(int argc, char* argv[]) {
     timer.time(tmr::TIMEOUT_4S);
 
     // Create thread for nonblocking teleop
-    std::future<std::tuple<double, double, bool>> teleop = std::async(&teleopInput);
+    std::future<std::tuple<double, double, bool>> teleopThread = std::async(&teleopInput);
 
     while (!timer.expired()) {
         if (*heartbeat == false) {
@@ -39,6 +44,12 @@ int main(int argc, char* argv[]) {
             std::stringstream command;
             auto [steer, speed, flag] = teleopInput();
             command << "# " << steer << " " << speed << " " << flag << " #";
+
+            // Store steer and speed in shared memory
+            double* steerAddr = (double*)((char*)teleop.getBaseAddress());
+            double* speedAddr = (double*)((char*)teleop.getBaseAddress() + sizeof(double));
+            *steerAddr = steer;
+            *speedAddr = speed;
 
             // Send teleop command
             std::cout << client.tcpSend(command.str()) << std::endl;
@@ -66,7 +77,7 @@ static std::tuple<double, double, bool> teleopInput() {
 
     double steer = 0.0, speed = 0.0;
     bool flag = 0;
-
+    
     if (GetAsyncKeyState('W'))
         speed = 1.0;
 
@@ -78,6 +89,9 @@ static std::tuple<double, double, bool> teleopInput() {
 
     if (GetAsyncKeyState('D'))
         steer = -40.0;
+
+    if (GetAsyncKeyState(' '))
+        flag = 1;
     
     steer = limit(steer, -40, 40);
     speed = limit(speed, -1, 1);
