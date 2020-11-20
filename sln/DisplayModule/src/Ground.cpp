@@ -3,8 +3,8 @@
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #elif defined(WIN32)
+#include <GL/freeglut.h>
 #include <Windows.h>
-#include <GL/gl.h>
 #else
 #include <GL/gl.h>
 #endif

@@ -1,12 +1,10 @@
 #ifdef __APPLE__
+#include <GLUT/glut.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
-#include <GLUT/glut.h>
 #elif defined(WIN32)
+#include <GL/freeglut.h>
 #include <Windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>

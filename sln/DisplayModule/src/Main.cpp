@@ -6,23 +6,21 @@
 #include <sstream>
 
 #ifdef __APPLE__
+#include <GLUT/glut.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
-#include <GLUT/glut.h>
-#include <unistd.h>
 #include <sys/time.h>
+#include <unistd.h>
 #elif defined(WIN32)
+#include <GL/freeglut.h>
 #include <Windows.h>
 #include <tchar.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
-#include <unistd.h>
 #include <sys/time.h>
+#include <unistd.h>
 #endif
 
 #include <GL\freeglut_ext.h>

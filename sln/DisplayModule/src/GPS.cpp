@@ -6,7 +6,7 @@
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #elif defined(WIN32)
-#include <GL/gl.h>
+#include <GL/freeglut.h>
 #include <Windows.h>
 #else
 #include <GL/gl.h>
