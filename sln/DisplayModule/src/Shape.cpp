@@ -6,9 +6,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #elif defined(WIN32)
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 #include <Windows.h>
 #else
 #include <GL/gl.h>

@@ -4,9 +4,7 @@
 #include <GLUT/glut.h>
 #elif defined(WIN32)
 #include <Windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
