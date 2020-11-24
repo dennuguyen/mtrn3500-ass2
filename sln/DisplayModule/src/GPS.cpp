@@ -27,10 +27,6 @@ void GPS::update() {
         data.push_back(*(OEM4*)((char*)gps.getBaseAddress()));
         timer.time(tmr::TIMEOUT_1S);
     }
-    
-    // Delete super old data
-    if (data.size() > 9000)
-        data.erase(data.begin(), data.begin() + 9000);
 }
 
 void GPS::draw(double x, double y) {
